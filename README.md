@@ -5,6 +5,35 @@ Author: Gerald Ndyamukama · geraldndyamukama39@gmail.com.
 This repository contains source and project assets, not a production-certified
 OS. Generated ISOs, VM disks, build trees and private key material are excluded.
 
+## Important disclaimer — development software
+
+Kilimanjaro OS is an independent, community-developed project. The current
+build is experimental, not a certified secure or stable release, and is not
+recommended for mission-critical, safety-critical or production use.
+
+**No warranty:** to the extent permitted by applicable law, original Kilimanjaro
+code is provided as-is, without express or implied warranties, including
+merchantability or fitness for a particular purpose. Warranty and liability
+terms for that code are governed by [GPL-3.0, sections 15–17](LICENSE) and
+applicable law. Third-party components retain their own terms.
+
+**Use with care:** installation, USB flashing, partitioning, updates and recovery
+can erase data, interrupt work or make a system unbootable. Verify backups and
+the destination device before writing anything; begin with a disposable VM or
+spare test machine. Hardware, drivers, games and applications are not guaranteed
+to work. A checksum or signed Secure Boot chain does not certify the entire OS.
+
+**No guaranteed support:** there is no professional support contract,
+response-time commitment or guaranteed maintenance/security-update schedule.
+Kilimanjaro claims no endorsement by Debian, KDE or other upstream vendors.
+
+This notice does not limit rights or obligations that cannot lawfully be
+excluded, change component licenses, or guarantee immunity from legal claims.
+Obtain qualified legal advice for your jurisdiction before commercial or broad
+public distribution. See [licensing scope](LICENSING.md),
+[release limitations](docs/READINESS-REVIEW.md) and
+[publication requirements](docs/PUBLISHING.md).
+
 The React website is in [website/](website/README.md). Run `npm ci` and
 `npm run dev` there for a local preview. It reuses the OS wallpapers, documents
 development status, and supports staging the checksummed development ISO for
