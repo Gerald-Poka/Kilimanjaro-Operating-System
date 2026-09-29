@@ -1,0 +1,8 @@
+{
+  "KPlugin": {
+    "Authors": [{"Name": "Kilimanjaro OS Project"}],
+    "Id": "KilimanjaroGreenMorning",
+    "License": "CC-BY-SA-4.0",
+    "Name": "Kilimanjaro Green Morning"
+  }
+}

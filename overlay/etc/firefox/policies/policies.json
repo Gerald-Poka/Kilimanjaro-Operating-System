@@ -1,0 +1,47 @@
+{
+  "policies": {
+    "Bookmarks": [
+      {
+        "Title": "TRA e-Filing (Kodi)",
+        "URL": "https://www.tra.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      },
+      {
+        "Title": "NIDA Gateway",
+        "URL": "https://www.nida.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      },
+      {
+        "Title": "GePG Payment Support",
+        "URL": "https://gepg.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      },
+      {
+        "Title": "TAMISEMI School Portals",
+        "URL": "https://www.tamisemi.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      },
+      {
+        "Title": "NECTA Results",
+        "URL": "https://www.necta.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      },
+      {
+        "Title": "HESLB",
+        "URL": "https://www.heslb.go.tz/",
+        "Placement": "toolbar",
+        "Folder": "Huduma za Serikali"
+      }
+    ],
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DisableTelemetry": true,
+    "DisplayBookmarksToolbar": "always",
+    "NetworkPrediction": false
+  }
+}

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Kilimanjaro Welcome
+Comment=Finish setting up Kilimanjaro OS
+Exec=kilimanjaro-welcome --first-run
+Icon=kilimanjaro-logo
+Terminal=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+X-KDE-StartupNotify=false

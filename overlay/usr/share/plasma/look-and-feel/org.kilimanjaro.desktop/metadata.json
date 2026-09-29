@@ -1,0 +1,15 @@
+{
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Kilimanjaro OS Project"
+      }
+    ],
+    "Category": "Global Themes (Plasma 6)",
+    "Description": "The reliable, warm and modern Kilimanjaro OS desktop",
+    "Id": "org.kilimanjaro.desktop",
+    "License": "GPL-3.0-or-later",
+    "Name": "Kilimanjaro"
+  }
+}

@@ -1,0 +1,30 @@
+/build/
+/output/
+/.agents/
+/.codex/
+/.aws/
+.directory
+*.qcow2
+*.vmdk
+*.vdi
+*.pem
+*.p12
+*.pfx
+*revocation*
+*.iso
+*.iso.sig
+SHA256SUMS
+
+# Local credentials and release-key material must never enter a public repository.
+.env
+.env.*
+!.env.example
+.gnupg/
+private-keys-v1.d/
+*private-key*
+*secret-key*
+*.key
+
+# Generated Python caches are not project source.
+__pycache__/
+*.py[cod]

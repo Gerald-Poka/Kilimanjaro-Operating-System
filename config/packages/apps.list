@@ -1,0 +1,30 @@
+# Browser and office tools
+firefox-esr
+libreoffice
+libreoffice-kf6
+libreoffice-plasma
+hunspell-sw
+evince
+fonts-crosextra-carlito
+fonts-crosextra-caladea
+fonts-liberation
+fonts-noto-core
+
+# Education and offline content
+kiwix
+kiwix-tools
+gcompris-qt
+tuxmath
+klavaro
+
+# Security and bandwidth visibility
+vnstat
+clamav
+clamav-daemon
+ufw
+apparmor
+apparmor-utils
+flatpak
+kdeconnect
+vlc
+obs-studio

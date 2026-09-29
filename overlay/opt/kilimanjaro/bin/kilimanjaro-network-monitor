@@ -1,0 +1,96 @@
+#!/usr/bin/python3
+"""Kilimanjaro live per-process network monitor for the KDE panel tray."""
+
+from __future__ import annotations
+
+import shutil
+import sys
+
+from PyQt6.QtCore import QProcess
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QMenu, QSystemTrayIcon, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+from netparse import parse_nethogs
+
+
+class Monitor(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Kilimanjaro Network Activity")
+        self.resize(720, 430)
+        root = QWidget()
+        layout = QVBoxLayout(root)
+        self.status = QLabel("Open this window to request permission and monitor live process traffic.")
+        layout.addWidget(self.status)
+        self.start_button = QPushButton("Start monitoring (administrator permission required)")
+        self.start_button.clicked.connect(self.start)
+        layout.addWidget(self.start_button)
+        self.table = QTableWidget(0, 4)
+        self.table.setHorizontalHeaderLabels(["Process", "PID", "Sent (kB/s)", "Received (kB/s)"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        layout.addWidget(self.table)
+        self.setCentralWidget(root)
+        self.process = QProcess(self)
+        self.process.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
+        self.process.readyReadStandardOutput.connect(self.read_output)
+        self.process.finished.connect(self.stopped)
+        self.latest = ""
+
+    def start(self) -> None:
+        if self.process.state() != QProcess.ProcessState.NotRunning:
+            return
+        if not shutil.which("nethogs"):
+            self.status.setText("NetHogs is not installed. Install it from Software profiles → Daily Essentials.")
+            return
+        self.status.setText("Waiting for administrator authentication…")
+        self.start_button.setEnabled(False)
+        self.process.start("pkexec", ["/usr/sbin/nethogs", "-t", "-d", "2", "-v", "0", "-b"])
+
+    def read_output(self) -> None:
+        self.latest += bytes(self.process.readAllStandardOutput()).decode(errors="replace")
+        self.refresh()
+
+    def refresh(self) -> None:
+        rows = parse_nethogs(self.latest)
+        if rows:
+            self.table.setRowCount(len(rows))
+            for row_index, (name, pid, _uid, sent, received) in enumerate(rows):
+                for column, value in enumerate((name, str(pid), f"{sent:.2f}", f"{received:.2f}")):
+                    self.table.setItem(row_index, column, QTableWidgetItem(value))
+            self.status.setText("Live process traffic · sent and received rates · refreshed every 2 seconds")
+            self.latest = ""
+
+    def stopped(self, exit_code: int, _status) -> None:
+        self.start_button.setEnabled(True)
+        if exit_code:
+            self.status.setText("Monitoring stopped. Permission may have been declined, or no capture device is available.")
+        else:
+            self.status.setText("Monitoring stopped.")
+
+    def closeEvent(self, event) -> None:
+        if self.process.state() != QProcess.ProcessState.NotRunning:
+            self.process.kill()
+        event.accept()
+
+
+def main() -> int:
+    app = QApplication(sys.argv)
+    app.setApplicationName("Kilimanjaro Network Activity")
+    window = Monitor()
+    tray = QSystemTrayIcon(app.style().standardIcon(app.style().StandardPixmap.SP_ComputerIcon), app)
+    menu = QMenu()
+    show_action = QAction("Network activity", menu)
+    show_action.triggered.connect(window.show)
+    menu.addAction(show_action)
+    quit_action = QAction("Quit", menu)
+    quit_action.triggered.connect(app.quit)
+    menu.addAction(quit_action)
+    tray.setContextMenu(menu)
+    tray.setToolTip("Kilimanjaro Network Activity")
+    tray.activated.connect(lambda _reason: window.show())
+    tray.show()
+    window.show()
+    return app.exec()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

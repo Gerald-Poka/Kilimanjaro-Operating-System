@@ -1,0 +1,10 @@
+{
+  "name": "Kilimanjaro OS",
+  "version": "0.1.0",
+  "codename": "Uhuru",
+  "author": "Gerald Ndyamukama",
+  "email": "geraldndyamukama39@gmail.com",
+  "based_on": "Debian GNU/Linux 13 (Trixie)",
+  "desktop": "KDE Plasma",
+  "purpose": "A complete operating system for work, development, gaming, and creativity."
+}

@@ -1,0 +1,12 @@
+{
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Kilimanjaro OS Project"
+      }
+    ],
+    "Id": "Kilimanjaro",
+    "License": "CC-BY-SA-4.0",
+    "Name": "Kilimanjaro Sunset"
+  }
+}

@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly program_name=${0##*/}
+readonly keyring_dir=/etc/apt/keyrings
+readonly profile_dir=/usr/share/kilimanjaro/profiles
+apt_updated=false
+temp_dir=''
+
+log() {
+  printf '[Kilimanjaro Software] %s\n' "$*"
+}
+
+die() {
+  printf '[Kilimanjaro Software] ERROR: %s\n' "$*" >&2
+  exit 1
+}
+
+cleanup() {
+  if [[ -n "$temp_dir" && -d "$temp_dir" ]]; then
+    rm -rf -- "$temp_dir"
+  fi
+}
+trap cleanup EXIT INT TERM
+
+[[ ${EUID:-$(id -u)} -eq 0 ]] || die 'This operation requires administrator authentication.'
+[[ $# -eq 2 ]] || die "Usage: $program_name install <approved-profile-or-application>"
+[[ $1 == install ]] || die 'Only the install operation is supported.'
+
+# Prevent two graphical installation requests from changing APT or Flatpak at
+# the same time. The GUI passes only the identifiers explicitly handled below.
+exec 9>/run/lock/kilimanjaro-software.lock
+flock -n 9 || die 'Another Kilimanjaro software installation is already running.'
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt_update() {
+  if [[ "$apt_updated" == false ]]; then
+    log 'Refreshing signed package information'
+    apt-get update
+    apt_updated=true
+  fi
+}
+
+apt_install() {
+  (($# > 0)) || return 0
+  apt_update
+  log "Installing Debian packages: $*"
+  apt-get install -y --no-install-recommends "$@"
+}
+
+enable_i386() {
+  if ! dpkg --print-foreign-architectures | grep -qx i386; then
+    log 'Enabling 32-bit compatibility required by Steam and Wine'
+    dpkg --add-architecture i386
+    apt_updated=false
+  fi
+}
+
+enable_flathub() {
+  apt_install flatpak
+  log 'Enabling the Flathub application catalogue'
+  flatpak remote-add --system --if-not-exists flathub \
+    https://flathub.org/repo/flathub.flatpakrepo
+}
+
+flatpak_install() {
+  enable_flathub
+  log "Installing sandboxed applications: $*"
+  flatpak install --system --noninteractive --or-update flathub "$@"
+}
+
+install_profile_packages() {
+  local profile=$1
+  local profile_file="$profile_dir/$profile.list"
+  local package
+  local -a packages=()
+
+  [[ -f "$profile_file" ]] || die "Missing package manifest for profile: $profile"
+  while IFS= read -r package; do
+    [[ -n "$package" && "$package" != \#* ]] || continue
+    [[ "$package" =~ ^[a-z0-9][a-z0-9+.-]*(:[a-z0-9]+)?$ ]] || \
+      die "Unsafe package entry in $profile_file: $package"
+    packages+=("$package")
+  done < "$profile_file"
+  ((${#packages[@]} > 0)) || die "Empty package manifest: $profile_file"
+  apt_install "${packages[@]}"
+}
+
+install_profile() {
+  case $1 in
+    daily)
+      install_profile_packages daily
+      ;;
+    office)
+      install_profile_packages office
+      ;;
+    development)
+      install_profile_packages development
+      ;;
+    gaming)
+      enable_i386
+      install_profile_packages gaming
+      flatpak_install \
+        com.heroicgameslauncher.hgl com.usebottles.bottles \
+        com.github.Matoking.protontricks
+      ;;
+    creator)
+      install_profile_packages creator
+      ;;
+    communication)
+      install_profile_packages communication
+      flatpak_install \
+        us.zoom.Zoom com.slack.Slack com.spotify.Client com.discordapp.Discord
+      ;;
+    ultimate)
+      install_profile daily
+      install_profile office
+      install_profile development
+      install_profile gaming
+      install_profile creator
+      install_profile communication
+      ;;
+    *)
+      die "Unknown or unapproved software profile: $1"
+      ;;
+  esac
+}
+
+install_chrome() {
+  install -d -m 0755 "$keyring_dir"
+  temp_dir=$(mktemp -d)
+  log 'Downloading the Google Linux signing key'
+  curl --fail --location --proto '=https' --tlsv1.2 \
+    https://dl.google.com/linux/linux_signing_key.pub \
+    --output "$temp_dir/google-linux-signing-key.pub"
+  gpg --batch --yes --dearmor \
+    --output "$keyring_dir/google-chrome.gpg" \
+    "$temp_dir/google-linux-signing-key.pub"
+  chmod 0644 "$keyring_dir/google-chrome.gpg"
+  printf '%s\n' \
+    'deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main' \
+    > /etc/apt/sources.list.d/google-chrome.list
+  apt_updated=false
+  apt_install google-chrome-stable
+}
+
+install_cursor() {
+  install -d -m 0755 "$keyring_dir"
+  temp_dir=$(mktemp -d)
+  log 'Downloading the Cursor repository signing key'
+  curl --fail --location --proto '=https' --tlsv1.2 \
+    https://downloads.cursor.com/keys/anysphere.asc \
+    --output "$temp_dir/anysphere.asc"
+  gpg --batch --yes --dearmor \
+    --output "$keyring_dir/cursor.gpg" \
+    "$temp_dir/anysphere.asc"
+  chmod 0644 "$keyring_dir/cursor.gpg"
+  printf '%s\n' \
+    'deb [arch=amd64 signed-by=/etc/apt/keyrings/cursor.gpg] https://downloads.cursor.com/aptrepo stable main' \
+    > /etc/apt/sources.list.d/cursor.list
+  apt_updated=false
+  apt_install cursor
+}
+
+install_node_agent() {
+  local requesting_uid=${PKEXEC_UID:-}
+  local user_record
+  local user_name
+  local user_home
+  local package_name
+
+  apt_install nodejs npm
+  case $1 in
+    claude-code) package_name=@anthropic-ai/claude-code ;;
+    gemini-cli) package_name=@google/gemini-cli ;;
+    *) die "Unknown coding agent: $1" ;;
+  esac
+
+  [[ "$requesting_uid" =~ ^[0-9]+$ ]] || \
+    die 'Could not identify the signed-in desktop user; refusing to install a coding agent as root.'
+  user_record=$(getent passwd "$requesting_uid") || \
+    die "Could not resolve desktop user ID $requesting_uid."
+  user_name=$(cut -d: -f1 <<< "$user_record")
+  user_home=$(cut -d: -f6 <<< "$user_record")
+  [[ -n "$user_name" && -d "$user_home" && "$user_home" != /root ]] || \
+    die 'The requesting desktop account has no safe home directory.'
+
+  install -d -o "$requesting_uid" -g "$(id -g "$user_name")" -m 0755 \
+    "$user_home/.local" "$user_home/.local/bin"
+  log "Installing $package_name into $user_home/.local as $user_name"
+  runuser -u "$user_name" -- env \
+    HOME="$user_home" \
+    USER="$user_name" \
+    PATH="$user_home/.local/bin:/usr/local/bin:/usr/bin:/bin" \
+    npm install --global --prefix "$user_home/.local" "$package_name"
+}
+
+target=$2
+case $target in
+  daily|office|development|gaming|creator|communication|ultimate)
+    install_profile "$target"
+    ;;
+  chrome)
+    install_chrome
+    ;;
+  cursor)
+    install_cursor
+    ;;
+  claude-code|gemini-cli)
+    install_node_agent "$target"
+    ;;
+  zoom)
+    flatpak_install us.zoom.Zoom
+    ;;
+  slack)
+    flatpak_install com.slack.Slack
+    ;;
+  spotify)
+    flatpak_install com.spotify.Client
+    ;;
+  discord)
+    flatpak_install com.discordapp.Discord
+    ;;
+  *)
+    die "Unknown or unapproved install target: $target"
+    ;;
+esac
+
+log "Completed installation target: $target"

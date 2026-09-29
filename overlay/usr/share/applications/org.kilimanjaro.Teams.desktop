@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Microsoft Teams
+Comment=Open Microsoft Teams for the web
+Exec=xdg-open https://teams.microsoft.com/v2/
+Icon=internet-web-browser
+Terminal=false
+Categories=Network;InstantMessaging;VideoConference;
+Keywords=teams;meeting;chat;microsoft;

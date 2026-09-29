@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Kilimanjaro OS</vendor>
+  <vendor_url>https://kilimanjaro-os.org/</vendor_url>
+  <icon_name>kilimanjaro-logo</icon_name>
+  <action id="org.kilimanjaro.software.install">
+    <description>Install a Kilimanjaro software profile</description>
+    <message>Authentication is required to install software for Kilimanjaro OS</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/opt/kilimanjaro/bin/kilimanjaro-software</annotate>
+  </action>
+</policyconfig>

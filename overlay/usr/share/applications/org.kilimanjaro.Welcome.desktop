@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Kilimanjaro Welcome
+Comment=Set up applications, gaming, development and hardware support
+Exec=kilimanjaro-welcome
+Icon=kilimanjaro-logo
+Terminal=false
+Categories=System;Settings;
+Keywords=software;setup;gaming;drivers;applications;
+StartupNotify=true
+X-KDE-StartupNotify=true

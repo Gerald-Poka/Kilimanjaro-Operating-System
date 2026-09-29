@@ -1,0 +1,8 @@
+[Unit]
+Description=Record a Kilimanjaro OS network usage snapshot
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/kilimanjaro/bin/kilimanjaro-netmeter
+

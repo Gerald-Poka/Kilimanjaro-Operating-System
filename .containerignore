@@ -1,0 +1,7 @@
+build/
+output/
+.git/
+*.iso
+*.iso.sig
+SHA256SUMS
+website/

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+Name=Kilimanjaro folder tools
+MimeType=inode/directory;
+Actions=openKonsoleHere;
+X-KDE-Priority=TopLevel
+
+[Desktop Action openKonsoleHere]
+Name=Open in Konsole
+Icon=utilities-terminal
+Exec=konsole --workdir "%f"

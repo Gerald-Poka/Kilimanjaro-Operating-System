@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Kilimanjaro
+Description=Kilimanjaro OS boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/kilimanjaro
+ScriptFile=/usr/share/plymouth/themes/kilimanjaro/kilimanjaro.script

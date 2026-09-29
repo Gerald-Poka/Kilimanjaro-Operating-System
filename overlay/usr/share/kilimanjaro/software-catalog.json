@@ -1,0 +1,166 @@
+{
+  "profiles": [
+    {
+      "id": "daily",
+      "title": "Daily Essentials",
+      "subtitle": "A complete everyday desktop",
+      "description": "Phone integration, multimedia playback, application discovery, archives, PDF tools and practical desktop utilities.",
+      "icon": "applications-utilities",
+      "accent": "#2DD4BF",
+      "size": "About 500 MB",
+      "highlights": ["KDE Connect", "VLC", "Discover", "Flatpak"]
+    },
+    {
+      "id": "office",
+      "title": "Office & Writing",
+      "subtitle": "Documents without compatibility surprises",
+      "description": "LibreOffice, PDF tools, dictionaries, OCR, scanning, reference management and Microsoft-compatible fonts.",
+      "icon": "applications-office",
+      "accent": "#60A5FA",
+      "size": "About 1 GB",
+      "highlights": ["LibreOffice", "Okular", "OCR", "Zotero"]
+    },
+    {
+      "id": "development",
+      "title": "AI & Development",
+      "subtitle": "A serious engineering workstation",
+      "description": "Compilers, Git, containers, Python, Node.js, Java, Go, Rust, debuggers and modern build systems.",
+      "icon": "applications-development",
+      "accent": "#A78BFA",
+      "size": "About 4 GB",
+      "highlights": ["Git", "Podman", "Python", "Rust", "Node.js"]
+    },
+    {
+      "id": "gaming",
+      "title": "Gaming Ready",
+      "subtitle": "Windows and Linux games, tuned together",
+      "description": "Steam, Wine, Lutris, Proton tools, GameMode, MangoHud, Vulkan utilities and 32-bit graphics support.",
+      "icon": "applications-games",
+      "accent": "#FB923C",
+      "size": "About 5 GB",
+      "highlights": ["Steam", "Wine", "Lutris", "Proton tools", "MangoHud"]
+    },
+    {
+      "id": "creator",
+      "title": "Creator Studio",
+      "subtitle": "Record, stream, edit and publish",
+      "description": "OBS Studio, video editing, 3D, illustration, photo editing, audio production, transcoding and multimedia codecs.",
+      "icon": "applications-multimedia",
+      "accent": "#F472B6",
+      "size": "About 6 GB",
+      "highlights": ["OBS", "Kdenlive", "Blender", "Krita", "FFmpeg"]
+    },
+    {
+      "id": "communication",
+      "title": "Meetings & Communication",
+      "subtitle": "Ready for work and collaboration",
+      "description": "Zoom, Slack, Spotify and Discord through sandboxed apps, plus Teams and Meet web launchers and phone integration.",
+      "icon": "system-users",
+      "accent": "#34D399",
+      "size": "About 2 GB",
+      "highlights": ["Zoom", "Slack", "Teams", "Discord", "Spotify"]
+    },
+    {
+      "id": "ultimate",
+      "title": "Kilimanjaro Ultimate",
+      "subtitle": "The complete flagship experience",
+      "description": "Install every Kilimanjaro profile. Designed for powerful machines used for development, gaming and content creation.",
+      "icon": "starred-symbolic",
+      "accent": "#F59E0B",
+      "size": "12 GB or more",
+      "highlights": ["Everything", "Maximum capability", "Large download"]
+    }
+  ],
+  "applications": [
+    {
+      "id": "chrome",
+      "title": "Google Chrome",
+      "description": "Google's browser with automatic updates from its signed repository.",
+      "icon": "google-chrome",
+      "action": "helper",
+      "target": "chrome",
+      "badge": "Official repository"
+    },
+    {
+      "id": "cursor",
+      "title": "Cursor",
+      "description": "Agent-first code editor installed from Cursor's signed Debian repository.",
+      "icon": "applications-development",
+      "action": "helper",
+      "target": "cursor",
+      "badge": "Official repository"
+    },
+    {
+      "id": "claude",
+      "title": "Claude Code",
+      "description": "Anthropic's terminal coding agent. Sign-in is completed after installation.",
+      "icon": "utilities-terminal",
+      "action": "helper",
+      "target": "claude-code",
+      "badge": "Account required"
+    },
+    {
+      "id": "gemini",
+      "title": "Gemini CLI",
+      "description": "Google's open-source terminal agent for software development workflows.",
+      "icon": "utilities-terminal",
+      "action": "helper",
+      "target": "gemini-cli",
+      "badge": "Account required"
+    },
+    {
+      "id": "chatgpt",
+      "title": "ChatGPT & Codex",
+      "description": "Open the official Linux download page for the ChatGPT and Codex desktop app.",
+      "icon": "applications-development",
+      "action": "url",
+      "target": "https://chatgpt.com/download/",
+      "badge": "Official download"
+    },
+    {
+      "id": "wps",
+      "title": "WPS Office",
+      "description": "Open the official WPS Linux download page for its current Debian package.",
+      "icon": "applications-office",
+      "action": "url",
+      "target": "https://www.wps.com/download/",
+      "badge": "Vendor licence"
+    },
+    {
+      "id": "zoom",
+      "title": "Zoom",
+      "description": "Video meetings installed as a sandboxed desktop application.",
+      "icon": "camera-web",
+      "action": "helper",
+      "target": "zoom",
+      "badge": "Flatpak"
+    },
+    {
+      "id": "slack",
+      "title": "Slack",
+      "description": "Team communication installed as a sandboxed desktop application.",
+      "icon": "internet-chat",
+      "action": "helper",
+      "target": "slack",
+      "badge": "Flatpak"
+    },
+    {
+      "id": "spotify",
+      "title": "Spotify",
+      "description": "Music and podcasts installed as a sandboxed desktop application.",
+      "icon": "audio-player",
+      "action": "helper",
+      "target": "spotify",
+      "badge": "Flatpak"
+    },
+    {
+      "id": "discord",
+      "title": "Discord",
+      "description": "Voice, video and community chat for gaming and collaboration.",
+      "icon": "internet-chat",
+      "action": "helper",
+      "target": "discord",
+      "badge": "Flatpak"
+    }
+  ]
+}

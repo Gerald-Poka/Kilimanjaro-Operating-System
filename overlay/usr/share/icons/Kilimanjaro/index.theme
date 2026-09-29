@@ -1,0 +1,11 @@
+[Icon Theme]
+Name=Kilimanjaro
+Comment=Kilimanjaro OS with Papirus fallback
+Inherits=Papirus-Dark,breeze-dark,hicolor
+Directories=scalable/apps
+
+[scalable/apps]
+Size=64
+Type=Scalable
+MinSize=16
+MaxSize=256

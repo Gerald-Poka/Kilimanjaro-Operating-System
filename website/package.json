@@ -1,0 +1,34 @@
+{
+  "name": "kilimanjaro-website",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/prepare-legal.mjs",
+    "prebuild": "node scripts/prepare-legal.mjs",
+    "preassets": "node scripts/prepare-legal.mjs",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "assets": "node scripts/prepare-assets.mjs",
+    "stage:release": "node scripts/stage-release.mjs",
+    "test": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "prettier": "^3.9.9",
+    "vite": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

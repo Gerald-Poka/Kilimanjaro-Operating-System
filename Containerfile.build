@@ -1,0 +1,30 @@
+FROM debian:trixie-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        coreutils \
+        debootstrap \
+        dosfstools \
+        findutils \
+        gawk \
+        gnupg \
+        grub-common \
+        grub-efi-amd64-bin \
+        grub-pc-bin \
+        make \
+        mtools \
+        python3 \
+        rsync \
+        sbsigntool \
+        squashfs-tools \
+        systemd \
+        util-linux \
+        xorriso \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+CMD ["./scripts/build.sh"]

@@ -1,0 +1,47 @@
+# Kernel and live-boot foundation
+linux-image-amd64
+initramfs-tools
+live-boot
+live-config
+live-config-systemd
+user-setup
+
+# Core system
+systemd-sysv
+systemd-timesyncd
+dbus
+sudo
+locales
+tzdata
+keyboard-configuration
+console-setup
+ca-certificates
+curl
+gnupg
+rsync
+
+# Hardware and networking
+network-manager
+wpasupplicant
+wireless-regdb
+firmware-linux-free
+firmware-misc-nonfree
+firmware-iwlwifi
+firmware-realtek
+# Explicit firmware and microcode for physical PCs; do not rely on recommends.
+firmware-intel-graphics
+firmware-amd-graphics
+firmware-intel-sound
+firmware-sof-signed
+firmware-atheros
+firmware-mediatek
+intel-microcode
+amd64-microcode
+usb-modeswitch
+modemmanager
+dosfstools
+e2fsprogs
+btrfs-progs
+xfsprogs
+exfatprogs
+ntfs-3g

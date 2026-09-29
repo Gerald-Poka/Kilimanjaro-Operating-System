@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Google Meet
+Comment=Open Google Meet
+Exec=xdg-open https://meet.google.com/
+Icon=camera-web
+Terminal=false
+Categories=Network;VideoConference;
+Keywords=meet;meeting;video;google;

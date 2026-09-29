@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Kilimanjaro OS
+GenericName=Kilimanjaro Installer
+Exec=calamares-install-debian
+Comment=Install Kilimanjaro OS on this computer
+Keywords=calamares;system;install;kilimanjaro;installer
+Icon=kilimanjaro-logo
+Terminal=false
+Categories=Qt;System;
+StartupWMClass=calamares
+StartupNotify=true

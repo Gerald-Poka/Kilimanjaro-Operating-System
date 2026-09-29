@@ -1,0 +1,13 @@
+[Unit]
+Description=Apply Kilimanjaro OS first-boot defaults
+After=NetworkManager.service
+ConditionPathExists=!/var/lib/kilimanjaro/firstboot-complete
+
+[Service]
+Type=oneshot
+ExecStart=/opt/kilimanjaro/bin/kilimanjaro-firstboot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly log_dir=/var/log/kilimanjaro
+readonly log_file="${log_dir}/network-activity.log"
+
+install -d -m 0755 "$log_dir"
+touch "$log_file"
+chmod 0640 "$log_file"
+
+timestamp=$(date --iso-8601=seconds)
+found=0
+
+for interface_path in /sys/class/net/*; do
+  interface=${interface_path##*/}
+  [[ "$interface" != lo ]] || continue
+  [[ -r "$interface_path/statistics/rx_bytes" ]] || continue
+  [[ -r "$interface_path/statistics/tx_bytes" ]] || continue
+
+  read -r rx_bytes < "$interface_path/statistics/rx_bytes"
+  read -r tx_bytes < "$interface_path/statistics/tx_bytes"
+  printf '%s interface=%s received_bytes=%s transmitted_bytes=%s\n' \
+    "$timestamp" "$interface" "$rx_bytes" "$tx_bytes" >> "$log_file"
+  found=1
+done
+
+if [[ "$found" -eq 0 ]]; then
+  printf '%s no-network-interface-detected\n' "$timestamp" >> "$log_file"
+fi
+

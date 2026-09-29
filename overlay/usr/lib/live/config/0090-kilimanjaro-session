@@ -1,0 +1,9 @@
+#!/bin/sh
+# Debian 13 renames the Plasma X11 session to plasmax11.desktop. Its generic
+# live-config SDDM component still writes plasma.desktop (Wayland). Correct
+# only the live session after that component; installed sessions use our
+# SDDM drop-in and do not execute live-config.
+set -eu
+if [ -f /var/lib/live/config/sddm ] && [ -f /etc/sddm.conf ]; then
+    sed -i 's/^Session=plasma\.desktop$/Session=plasmax11.desktop/' /etc/sddm.conf
+fi

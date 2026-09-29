@@ -1,0 +1,47 @@
+export const benefits = [
+  {
+    id: "gaming",
+    number: "01",
+    label: "FOR YOUR NEXT SESSION",
+    icon: "game",
+    title: "Your games. Your setup.",
+    description:
+      "Bring your library to Linux with the Gaming Ready profile. Launch games with Steam and Lutris, explore Wine compatibility, and keep an eye on performance with MangoHud.",
+    tools: ["Steam", "Lutris", "Wine", "GameMode", "MangoHud"],
+    status: "Optional Gaming Ready profile",
+    link: "Explore gaming tools",
+    category: "Gaming",
+    visualLabel: "GAMING READY",
+    visualDetail: "Launch · Play · Monitor",
+  },
+  {
+    id: "creation",
+    number: "02",
+    label: "FOR THE THINGS YOU MAKE",
+    icon: "record",
+    title: "From idea to final cut.",
+    description:
+      "Record and stream with OBS Studio, already included. Add Creator Studio for video editing, 3D, illustration and audio production—all on the same desktop.",
+    tools: ["OBS Studio", "Kdenlive", "Blender", "Krita"],
+    status: "OBS included · More tools optional",
+    link: "Explore creator tools",
+    category: "Creation",
+    visualLabel: "CREATOR STUDIO",
+    visualDetail: "Record · Edit · Publish",
+  },
+  {
+    id: "everyday",
+    number: "03",
+    label: "FOR EVERYTHING IN BETWEEN",
+    icon: "layers",
+    title: "A better everyday flow.",
+    description:
+      "Browse, write, watch and stay connected. Firefox, LibreOffice, VLC and KDE Connect are included, with a familiar KDE workspace you can make your own.",
+    tools: ["Firefox", "LibreOffice", "VLC", "KDE Connect"],
+    status: "Everyday essentials included",
+    link: "Explore everyday tools",
+    category: "Everyday",
+    visualLabel: "YOUR DAILY DESKTOP",
+    visualDetail: "Browse · Work · Connect",
+  },
+];

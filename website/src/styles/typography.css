@@ -1,0 +1,291 @@
+/* Readable type and reflow adjustments; never shrink text to make it fit. */
+html {
+  font-size: 100%;
+}
+h1,
+h2,
+h3,
+.brand,
+.button {
+  overflow-wrap: anywhere;
+}
+.section-heading > p,
+.why-intro > p,
+.benefit-description,
+.about-section p:not(.eyebrow),
+.app-card p,
+.steps p,
+.faq-list summary,
+.faq-list details p,
+.release-card > p,
+.download-intro,
+.hero-description {
+  font-size: var(--text-body);
+}
+.button,
+.navigation {
+  font-size: var(--text-body);
+}
+.brand {
+  letter-spacing: 0.06em;
+}
+.header-inner {
+  gap: 20px;
+}
+.navigation {
+  gap: 20px;
+}
+.eyebrow,
+.benefit-label,
+.benefit-visual-label,
+.scene-label span,
+.preview-caption > span:last-child,
+.faq-heading > span {
+  letter-spacing: 0.06em;
+}
+.footer {
+  padding-block: 38px;
+  row-gap: 22px;
+}
+.footer p,
+.footer > a:last-of-type {
+  font-size: var(--text-body);
+}
+.footer > span {
+  font-size: var(--text-small);
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer .brand img {
+  width: 36px;
+  height: 36px;
+}
+.scene-label span,
+.preview-toolbar,
+.preview-caption > span:last-child,
+.fine-print,
+.faq-heading > span,
+.why-qualification {
+  color: var(--muted);
+}
+.release-card .release-warning {
+  color: #d6c09c;
+}
+.hero {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 100svh;
+  max-height: none;
+}
+.hero-content {
+  padding-block: clamp(170px, 23vh, 260px) 60px;
+}
+.hero-content .eyebrow {
+  flex-wrap: wrap;
+}
+.hero-bottom {
+  position: relative;
+  inset: auto;
+  margin-top: auto;
+  padding-block: 24px 36px;
+  flex-wrap: wrap;
+}
+.scene-controls {
+  flex-wrap: wrap;
+}
+.scene-label {
+  min-width: 0;
+}
+.scene-dots button {
+  width: 24px;
+  min-height: 36px;
+}
+.motion-button {
+  width: 40px;
+  height: 40px;
+}
+.identity-strip {
+  flex-wrap: wrap;
+}
+.identity-strip > span:first-child {
+  max-width: none;
+}
+.preview-toolbar {
+  height: auto;
+  min-height: 48px;
+  padding-block: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.preview-caption {
+  flex-wrap: wrap;
+}
+.wallpaper-picker {
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+}
+.software-toolbar,
+.download-layout > *,
+.section-heading > *,
+.benefit-card {
+  min-width: 0;
+}
+.app-search,
+.app-search input {
+  width: 100%;
+  max-width: 260px;
+}
+.app-search input {
+  font-size: var(--text-body);
+  min-width: 0;
+}
+.app-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
+.app-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.app-icon {
+  margin-bottom: 14px;
+}
+.app-status {
+  position: static;
+  margin-bottom: 18px;
+  max-width: 100%;
+}
+.release-top,
+.checksum > div {
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.release-name {
+  flex-wrap: wrap;
+}
+.benefit-label,
+.benefit-status {
+  line-height: 1.6;
+  align-items: flex-start;
+}
+.benefit-label > span {
+  flex-shrink: 0;
+}
+.benefit-visual-label {
+  right: 20px;
+  line-height: 1.5;
+}
+.benefit-visual-detail {
+  text-align: center;
+  padding-inline: 15px;
+}
+.why-next-step {
+  flex-wrap: wrap;
+}
+.why-next-step .button {
+  flex-shrink: 1;
+  max-width: 100%;
+}
+.checksum code {
+  color: var(--muted);
+}
+@media (max-width: 1200px) {
+  .header-inner {
+    height: 74px;
+  }
+  .mobile-toggle {
+    display: flex;
+  }
+  .navigation {
+    display: none;
+    position: absolute;
+    top: 74px;
+    inset-inline: 0;
+    background: #0b171ff5;
+    padding: 20px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .navigation.open {
+    display: flex;
+    max-height: calc(100svh - 74px);
+    overflow-y: auto;
+  }
+  .navigation a {
+    padding: 14px 16px;
+  }
+  .page-content {
+    padding-top: 74px;
+  }
+  .nav-download {
+    margin-top: 10px;
+  }
+}
+@media (max-width: 850px) {
+  .hero-content {
+    padding-top: 150px;
+  }
+  .scene-controls {
+    justify-content: flex-start;
+  }
+  .scene-label {
+    width: 100%;
+    text-align: left;
+  }
+  .scene-dots {
+    gap: 4px;
+  }
+  .benefit-grid {
+    grid-template-columns: 1fr;
+  }
+  .why-intro {
+    max-width: none;
+  }
+  .identity-strip > span:first-child {
+    width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .hero-content {
+    padding-top: 130px;
+    padding-bottom: 30px;
+  }
+  .hero-bottom {
+    padding-bottom: 30px;
+  }
+  .hero-actions {
+    align-items: stretch;
+  }
+  .hero-actions .button {
+    min-width: 0;
+  }
+  .hero h1 {
+    font-size: clamp(2.75rem, 12vw, 4rem);
+  }
+  .hero-meta {
+    line-height: 1.6;
+  }
+  .preview-toolbar > span:first-child {
+    display: none;
+  }
+  .preview-toolbar > span:last-child {
+    width: 100%;
+  }
+  .wallpaper-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .release-card {
+    padding: 22px 18px;
+  }
+  .download-facts span {
+    align-items: flex-start;
+  }
+  .footer {
+    gap: 22px;
+  }
+  .footer .brand {
+    white-space: normal;
+  }
+}

@@ -1,0 +1,16 @@
+# Kilimanjaro OS desktop service policy.
+disable apt-daily.timer
+disable apt-daily-upgrade.timer
+disable avahi-daemon.service
+enable bluetooth.service
+disable cups-browsed.service
+disable ModemManager.service
+disable clamav-daemon.service
+disable clamav-freshclam.service
+
+enable NetworkManager.service
+enable systemd-timesyncd.service
+enable sddm.service
+enable ufw.service
+enable kilimanjaro-firstboot.service
+enable kilimanjaro-netmeter.timer

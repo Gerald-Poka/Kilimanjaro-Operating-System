@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Kilimanjaro Network Activity
+Comment=View live network rates by process from the system tray
+Exec=kilimanjaro-network-monitor
+Icon=network-transmit-receive
+Terminal=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+X-KDE-StartupNotify=false

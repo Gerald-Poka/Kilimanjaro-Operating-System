@@ -1,0 +1,48 @@
+.page-content {
+  padding-top: 88px;
+  min-height: calc(100svh - 155px);
+}
+main:focus {
+  outline: none;
+}
+.navigation a[aria-current="page"] {
+  color: var(--gold);
+}
+.page-content > .section {
+  padding-top: 72px;
+}
+.page-content > .about-section {
+  padding-block: 100px;
+  min-height: 65svh;
+}
+.page-content > .download-section {
+  min-height: 65svh;
+}
+.faq-section {
+  padding-bottom: 90px;
+}
+.faq-section .faq-heading {
+  margin-top: 0;
+}
+.not-found-description {
+  margin-top: 30px;
+}
+.author-link:hover {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+@media (max-width: 850px) {
+  .page-content {
+    padding-top: 74px;
+  }
+  .page-content > .section {
+    padding-top: 55px;
+  }
+  .page-content > .about-section {
+    padding-block: 65px;
+  }
+  .faq-section {
+    padding-bottom: 65px;
+  }
+}

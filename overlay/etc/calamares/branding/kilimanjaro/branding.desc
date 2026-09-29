@@ -1,0 +1,42 @@
+---
+componentName: kilimanjaro
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 1024px,720px
+windowPlacement: center
+
+strings:
+    productName: Kilimanjaro OS
+    shortProductName: Kilimanjaro
+    version: 0.1.0
+    shortVersion: 0.1.0
+    versionedName: Kilimanjaro OS 0.1.0 Uhuru
+    shortVersionedName: Kilimanjaro 0.1.0
+    bootloaderEntryName: Kilimanjaro OS
+    productUrl: ""
+    supportUrl: ""
+    knownIssuesUrl: ""
+    releaseNotesUrl: ""
+    donateUrl: ""
+
+sidebar: widget
+navigation: widget
+
+images:
+    productLogo: kilimanjaro-logo.svg
+    productIcon: kilimanjaro-logo.svg
+    productWelcome: kilimanjaro-logo.svg
+
+slideshow: show.qml
+slideshowAPI: 2
+
+style:
+   SidebarBackground: "#171a21"
+   SidebarText: "#f3f1e8"
+   SidebarTextCurrent: "#ffffff"
+   SidebarBackgroundCurrent: "#f59e42"
+
+showSupportUrl: false
+showKnownIssuesUrl: false
+showReleaseNotesUrl: false

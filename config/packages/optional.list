@@ -1,0 +1,6 @@
+# Deliberately excluded from the default v0.1 image.
+# Add only after redistribution terms, resource use, and package source are approved.
+# onlyoffice-desktopeditors
+# TurboWarp Desktop (no Debian package; packaging decision required)
+# Kolibri content channels (distributed as separate content packs)
+
