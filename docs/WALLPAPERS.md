@@ -26,6 +26,10 @@ copyright or other licensable rights apply. Existing assets retain their metadat
 | Kilimanjaro-Amber-Highlands | Copper grasses and clearing afternoon storm clouds |
 | Kilimanjaro-Violet-Twilight | Rose/violet evening with a subtle rock inscription |
 
+All five additions include the Kilimanjaro identity ribbon: overlapping dark
+curved bands with a muted geometric diamond/chevron pattern along the lower edge,
+matching the original sunset wallpaper. The original six packages are unchanged.
+
 Violet Twilight contains the exact requested name **Poka Machande** as a small,
 low-contrast inscription on the bottom-right foreground rock. It is a personal
 artwork detail, not a replacement for upstream software author credits.
@@ -56,6 +60,26 @@ buildings, logos, watermark or collage. No text except the requested inscription
    on a dark foreground rock near the bottom right, charcoal-on-slate, integrated
    into the rock texture, about 5% of image width, discoverable on close inspection.
    Spell P-o-k-a M-a-c-h-a-n-d-e; not a large title, banner or bright overlay.
+
+## Identity-ribbon editing prompt
+
+The built-in image-generation tool edited each new wallpaper individually,
+using that scene as Image 1 (edit target) and the original sunset wallpaper as
+Image 2 (brand-motif reference). Shared prompt:
+
+> Change only the bottom foreground by adding the signature broad dark flowing
+> ribbon from Image 2: two graceful overlapping wave-shaped bands across the
+> lower 18 percent, a muted indigo geometric woven diamond/chevron pattern inside
+> the curved band and a very thin blue-grey contour edge. Match the reference
+> shape, understated contrast and refined integrated look, not a bright border.
+> Preserve the target's mountain, sky, landscape, lighting, colors and composition
+> above the band. No text, logos, watermark or extra objects. Single full-bleed
+> 16:9 wallpaper.
+
+For Violet Twilight the prompt additionally required preserving the exact subtle
+“Poka Machande” inscription on its bottom-right rock, routing the ribbon around
+it or retaining the rock naturally in front. All five edits were visually checked
+before replacing the project assets. Previous versions remain in Git history.
 
 ## Build status
 
