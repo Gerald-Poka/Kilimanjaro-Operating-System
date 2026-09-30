@@ -16,7 +16,7 @@ export default function DesktopGallery() {
           </h1>
         </div>
         <p>
-          A calm, dark desktop. A mountain on your horizon. Six original
+          A calm, dark desktop. A mountain on your horizon. Eleven original
           wallpapers, one unmistakable identity.
         </p>
       </div>

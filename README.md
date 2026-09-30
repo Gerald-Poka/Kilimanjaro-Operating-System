@@ -81,7 +81,7 @@ The current `0.1.0` milestone is a development image. The ISO builds, passes the
 - Kilimanjaro Welcome with authenticated Daily, Office, Development, Gaming,
   Creator, Communication, and Ultimate software profiles
 - KDE Discover with APT and Flatpak support, KDE Connect, VLC, and OBS Studio
-- six coordinated Kilimanjaro wallpapers (the original plus five alternate scenes), emblem, dark color scheme, boot splash, login styling, and desktop layout
+- eleven coordinated Kilimanjaro wallpapers in source, emblem, dark color scheme, boot splash, login styling, and desktop layout
 - hybrid BIOS/UEFI ISO generation with Debian's signed shim and GRUB in the UEFI boot chain, SHA-256 checksums, and optional GPG signing
 
 Debian 13 was selected because it is the current stable release and supports the target amd64 hardware class. The suite is pinned by codename (`trixie`) rather than the moving `stable` alias.
@@ -156,11 +156,17 @@ on supported ASUS ROG models. See the [ROG stack compatibility notes](https://gi
 
 ## Kilimanjaro wallpaper collection
 
-The desktop ships the original sunset wallpaper plus five matching alternatives:
-Dawn, Blue Hour, Green Morning, Uhuru Glacier, and Savanna Gold. Each is a
+The source collection contains the original sunset wallpaper plus ten alternatives:
+Dawn, Blue Hour, Green Morning, Uhuru Glacier, Savanna Gold, Moonlight, Forest Mist,
+Sea of Clouds, Amber Highlands, and Violet Twilight. Each is a
 separate wallpaper entry in KDE's Desktop and Wallpaper settings, so users can
 switch images without replacing files or changing the system theme. The source
 art is kept in `overlay/usr/share/wallpapers/` and packaged into the next ISO.
+
+The five newest scenes are also available in the website gallery and hero rotation.
+Violet Twilight includes a subtle “Poka Machande” inscription on a foreground rock.
+See [artwork provenance and prompts](docs/WALLPAPERS.md). Existing ISO artifacts
+are unchanged by this source update; rebuild before expecting the new images in a VM.
 
 ## Repository layout
 

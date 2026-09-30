@@ -286,6 +286,11 @@ expected = {
     "Kilimanjaro-Green-Morning": ("KilimanjaroGreenMorning", "Kilimanjaro Green Morning"),
     "Kilimanjaro-Uhuru-Glacier": ("KilimanjaroUhuruGlacier", "Kilimanjaro Uhuru Glacier"),
     "Kilimanjaro-Savanna-Gold": ("KilimanjaroSavannaGold", "Kilimanjaro Savanna Gold"),
+    "Kilimanjaro-Moonlight": ("KilimanjaroMoonlight", "Kilimanjaro Moonlight"),
+    "Kilimanjaro-Forest-Mist": ("KilimanjaroForestMist", "Kilimanjaro Forest Mist"),
+    "Kilimanjaro-Sea-of-Clouds": ("KilimanjaroSeaofClouds", "Kilimanjaro Sea of Clouds"),
+    "Kilimanjaro-Amber-Highlands": ("KilimanjaroAmberHighlands", "Kilimanjaro Amber Highlands"),
+    "Kilimanjaro-Violet-Twilight": ("KilimanjaroVioletTwilight", "Kilimanjaro Violet Twilight"),
 }
 for package, (plugin_id, name) in expected.items():
     directory = root / package
@@ -302,7 +307,7 @@ for package, (plugin_id, name) in expected.items():
         raise SystemExit(f"unexpected wallpaper size in {image}: {width}x{height}")
 PY
 then
-  pass 'six distinct Kilimanjaro wallpaper entries (five 4K alternates)'
+  pass 'eleven distinct Kilimanjaro wallpaper entries (ten 3840x2160 alternates)'
 else
   fail 'Kilimanjaro wallpaper entries are incomplete or malformed'
 fi

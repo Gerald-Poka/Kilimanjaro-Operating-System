@@ -26,12 +26,12 @@ src/data/          Editable feature, application and FAQ content
 src/hooks/         Reduced-motion preference
 src/styles/        Tokens, global layout, component/responsive styles
 public/brand/      Existing Kilimanjaro emblem
-public/wallpapers/ Six optimized OS wallpapers
+public/wallpapers/ Eleven optimized OS wallpapers
 scripts/           Asset preparation and development-release staging
 tests/             Desktop/mobile browser tests
 ```
 
-The hero rotates through six scenes every ten seconds. Its mountain-ridgeline constellation responds to the pointer on fine-pointer devices. The pause button stops both effects. Reduced-motion preference disables automatic motion, while manual wallpaper selection remains available. Animation stops when the hero is offscreen or the tab is hidden.
+The hero rotates through eleven scenes every ten seconds. Its mountain-ridgeline constellation responds to the pointer on fine-pointer devices. The pause button stops both effects. Reduced-motion preference disables automatic motion, while manual wallpaper selection remains available. Animation stops when the hero is offscreen or the tab is hidden.
 
 ## Readable typography
 

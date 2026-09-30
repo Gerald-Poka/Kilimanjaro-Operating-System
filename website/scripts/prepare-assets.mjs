@@ -14,6 +14,11 @@ const scenes = [
   ["Kilimanjaro-Green-Morning", "green-morning"],
   ["Kilimanjaro-Uhuru-Glacier", "glacier"],
   ["Kilimanjaro-Savanna-Gold", "savanna"],
+  ["Kilimanjaro-Moonlight", "moonlight"],
+  ["Kilimanjaro-Forest-Mist", "forest-mist"],
+  ["Kilimanjaro-Sea-of-Clouds", "sea-of-clouds"],
+  ["Kilimanjaro-Amber-Highlands", "amber-highlands"],
+  ["Kilimanjaro-Violet-Twilight", "violet-twilight"],
 ];
 for (const [source, name] of scenes) {
   execFileSync("magick", [
@@ -38,5 +43,5 @@ await copyFile(
   path.join(root, "public/brand/kilimanjaro.svg"),
 );
 console.log(
-  "Prepared six optimized wallpapers and the existing OS emblem. Original artwork is unchanged.",
+  "Prepared eleven optimized wallpapers and the existing OS emblem. Original artwork is unchanged.",
 );

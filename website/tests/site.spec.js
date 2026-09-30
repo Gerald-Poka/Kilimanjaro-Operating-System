@@ -311,6 +311,39 @@ test("home, navigation and responsive layout", async ({ page }, info) => {
   expect(errors).toEqual([]);
 });
 
+test("all eleven wallpapers load and the new scenes are selectable", async ({
+  page,
+}) => {
+  await page.goto("/desktop");
+  const picker = page.getByRole("group", {
+    name: "Explore desktop wallpapers",
+  });
+  await expect(picker.getByRole("button")).toHaveCount(11);
+  for (const [name, id] of [
+    ["Moonlight", "moonlight"],
+    ["Forest mist", "forest-mist"],
+    ["Sea of clouds", "sea-of-clouds"],
+    ["Amber highlands", "amber-highlands"],
+    ["Violet twilight", "violet-twilight"],
+  ]) {
+    await picker.getByRole("button", { name, exact: true }).click();
+    const preview = page.locator(".desktop-preview > img");
+    await expect(preview).toHaveAttribute("src", `/wallpapers/${id}.webp`);
+    await expect
+      .poll(() =>
+        preview.evaluate((img) => img.complete && img.naturalWidth > 0),
+      )
+      .toBe(true);
+  }
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Show Violet twilight", exact: true })
+    .click();
+  await expect(page.locator(".scene-label strong")).toHaveText(
+    "Violet twilight",
+  );
+});
+
 test("wallpaper controls, application filters and FAQ work", async ({
   page,
 }) => {

@@ -29,6 +29,27 @@ export const wallpapers = [
     name: "Savanna gold",
     mood: "Rooted here. Ready to go further.",
   },
+  {
+    id: "moonlight",
+    name: "Moonlight",
+    mood: "Make space for your next idea.",
+  },
+  {
+    id: "forest-mist",
+    name: "Forest mist",
+    mood: "A quieter kind of inspiration.",
+  },
+  {
+    id: "sea-of-clouds",
+    name: "Sea of clouds",
+    mood: "See beyond the everyday.",
+  },
+  {
+    id: "amber-highlands",
+    name: "Amber highlands",
+    mood: "Warm light. Fresh possibilities.",
+  },
+  { id: "violet-twilight", name: "Violet twilight", mood: "Your own horizon." },
 ];
 
 export const categories = [
