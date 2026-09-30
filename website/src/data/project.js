@@ -4,13 +4,14 @@ export const repositoryUrl =
 export const readiness = {
   version: "0.1.0",
   updated: "30 September 2026",
-  sha256: "3c6ff34476753d65ad1a70151f8418518b290526da825f64bb41ead6dbfd692c",
+  sha256: "8ddb15abc7570273bfec077da6cacf1c67249803d2d747072e6e28cf9d4a9589",
   passed: [
     "BIOS optical live boot: graphical target, SDDM and Plasma running.",
     "BIOS virtual USB live boot: graphical target, SDDM and Plasma running.",
-    "UEFI virtual USB live boot: Secure Boot enabled and desktop services running.",
+    "UEFI virtual USB live boot (software emulation): Secure Boot enabled and desktop services running.",
     "ISO checksum, embedded package baseline and signed boot-image inspection.",
     "Six release-signing regression tests using disposable test keys.",
+    "Signed local APT base-package installation and upgrade; edited configuration preserved; tampered, unsigned and expired updates rejected.",
   ],
   pending: [
     [

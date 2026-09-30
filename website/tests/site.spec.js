@@ -28,6 +28,20 @@ test("release status separates passed virtual tests from pending physical qualif
   );
 });
 
+test("update documentation distinguishes available Debian updates from pending public project activation", async ({
+  page,
+}) => {
+  await page.goto("/documentation");
+  const updates = page.locator("#updates-recovery");
+  await expect(updates).toContainText("sudo apt update");
+  await expect(updates).toContainText("sudo apt upgrade");
+  await expect(updates).toContainText("Terminal updates: APT, not DNF");
+  await expect(updates).toContainText(
+    "project repository is not publicly activated",
+  );
+  await expect(updates).toContainText("Recovery remains unqualified");
+});
+
 test("relative type supports enlarged text and footer contrast is readable", async ({
   page,
 }, info) => {

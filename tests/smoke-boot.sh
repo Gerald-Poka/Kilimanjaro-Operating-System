@@ -10,6 +10,7 @@ report_dir="$ROOT_DIR/build/test/${SMOKE_BOOT_MEDIA:-optical}"
 if [[ ${SMOKE_FIRMWARE:-bios} != bios ]]; then
   report_dir="$ROOT_DIR/build/test/${SMOKE_FIRMWARE}-${SMOKE_BOOT_MEDIA:-optical}"
 fi
+report_dir=${SMOKE_REPORT_DIR:-$report_dir}
 log_path="$report_dir/smoke-boot.log"
 timeout_seconds=${SMOKE_TIMEOUT:-300}
 memory=${SMOKE_MEMORY:-2048}
@@ -75,6 +76,10 @@ case ${SMOKE_FIRMWARE:-bios} in
 esac
 
 acceleration=(-accel tcg,thread=multi -cpu max)
+monitor_options=()
+if [[ -n ${SMOKE_QMP_SOCKET:-} ]]; then
+  monitor_options=(-qmp "unix:$SMOKE_QMP_SOCKET,server=on,wait=off")
+fi
 if [[ ${SMOKE_ACCEL:-auto} != tcg && -r /dev/kvm && -w /dev/kvm ]]; then
   acceleration=(-enable-kvm -cpu host)
 fi
@@ -93,6 +98,7 @@ qemu-system-x86_64 \
   -chardev "socket,id=serial0,path=$serial_dir/serial.sock,server=on,wait=off,logfile=$log_path" \
   -serial chardev:serial0 \
   -monitor none \
+  "${monitor_options[@]}" \
   -no-reboot \
   >"$report_dir/smoke-qemu.log" 2>&1 &
 qemu_pid=$!

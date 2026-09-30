@@ -17,6 +17,7 @@ keyboard-configuration
 console-setup
 ca-certificates
 curl
+iproute2
 gnupg
 rsync
 

@@ -116,6 +116,12 @@ for package in e2fsprogs btrfs-progs xfsprogs cracklib-runtime wamerican squashf
     exit 1
   }
 done
+for package in kilimanjaro-base kilimanjaro-desktop; do
+  grep -Fxq "$package $KILIMANJARO_PACKAGE_VERSION" "$report_dir/filesystem.packages" || {
+    printf 'FAIL: versioned project package missing: %s\n' "$package" >&2
+    exit 1
+  }
+done
 
 grep -Eq '^shim-signed ' "$report_dir/filesystem.packages" || {
   printf 'FAIL: shim-signed is missing from the live system package manifest\n' >&2

@@ -8,13 +8,20 @@ The owner explicitly deferred physical installation and physical USB writes.
 
 `output/kilimanjaro-os-0.1.0-amd64.iso`
 
-SHA-256: `3c6ff34476753d65ad1a70151f8418518b290526da825f64bb41ead6dbfd692c`
+SHA-256: `8ddb15abc7570273bfec077da6cacf1c67249803d2d747072e6e28cf9d4a9589`
 
 The local website download is staged from this artifact. It is a development
 ISO with checksums, not a GPG-authenticated public release. No public publishing
 or owner release-key creation was performed.
 
 ## Changes and findings
+
+- Versioned `kilimanjaro-base` and `kilimanjaro-desktop` packages are now
+  installed in the ISO and registered with dpkg. Signed project repository
+  snapshot generation and scoped client files are implemented. Actual local
+  signed APT installation/upgrade and tamper/expiry rejection passed; see
+  [APT integration evidence](APT-TEST-RESULTS.md). Public hosting and the
+  owner's trusted archive key remain pending by explicit choice.
 
 - Added canonical GPL-3.0 and scoped original code as GPL-3.0-only. Packaged the
   notices in the OS and website. Upstream authors and file-specific licenses
@@ -40,7 +47,7 @@ Source validation and six release regression tests passed. The release tests
 include real GPG verification and tamper rejection using isolated, disposable
 test keys; those keys do not authenticate Gerald or a Kilimanjaro release.
 
-Website browser tests passed 23 tests with one intentional mobile-pointer skip;
+Website browser tests passed 27 tests with one intentional mobile-pointer skip;
 the production bundle builds. The ISO's embedded firmware/package baseline,
 root ownership, packaged GPL notice and PE signature presence were inspected.
 PE signature presence alone does not prove firmware acceptance or ISO authenticity.
@@ -51,18 +58,29 @@ Virtual boot checks for this exact artifact passed:
 |---|---|
 | Optical / BIOS | Graphical target, SDDM and Plasma running |
 | USB / BIOS | Graphical target, SDDM and Plasma running |
-| USB / UEFI Secure Boot | Secure Boot enabled; graphical target, SDDM and Plasma running |
+| USB / UEFI Secure Boot (software emulation) | Secure Boot enabled; graphical target, SDDM and Plasma running |
 
-Logs are under `build/test/optical/`, `build/test/usb/` and
-`build/test/secureboot-usb/`. Static inspection also passed after adding the
+Passed logs are under `build/test/optical/`, `build/test/usb/` and
+`build/test/secureboot-tcg-final/`. Static inspection also passed after adding the
 actual USB EFI partition byte-comparison check. These are service-readiness
 checks, not visual rendering, physical hardware or installed-system certification.
+
+The current KVM Secure Boot rerun failed at firmware startup with
+`Unsupported image`; preserve that result in `build/test/secureboot-usb/`.
+The clean software-emulated run uses `build/test/secureboot-tcg-final/` and
+`SMOKE_ACCEL=tcg SMOKE_MEMORY=4096 SMOKE_CPUS=4 SMOKE_TIMEOUT=600`.
+An earlier guest-confirmed run ended with a wrapper error after its script was
+edited while running; the unchanged-script repeat exited successfully.
+A software-emulated pass does not resolve
+the KVM failure or qualify physical firmware. Investigate before broader claims.
 
 Previous offline UEFI installation testing used an older artifact and must not
 be treated as full installed-system qualification of this rebuilt ISO.
 
-CodeRabbit could not run because this workspace is not a Git repository; no
-external automated code review was performed. Manual inspection and regression
+During the initial readiness review, CodeRabbit could not run because the
+workspace was not yet a Git repository. Git has since been initialized and
+source published; no external automated review of these APT changes is claimed.
+Manual inspection and regression
 checks do not establish that every issue has been found.
 
 ## Open release gates

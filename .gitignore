@@ -3,6 +3,7 @@
 /.agents/
 /.codex/
 /.aws/
+/.ssh/
 .directory
 *.qcow2
 *.vmdk

@@ -5,12 +5,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
+        apt-utils \
         coreutils \
         debootstrap \
         dosfstools \
+        dpkg-dev \
         findutils \
         gawk \
         gnupg \
+        gpgv \
         grub-common \
         grub-efi-amd64-bin \
         grub-pc-bin \

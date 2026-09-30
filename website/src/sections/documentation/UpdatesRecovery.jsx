@@ -31,6 +31,29 @@ export default function UpdatesRecovery() {
           not mix arbitrary Debian releases or unknown repositories.
         </li>
       </ol>
+      <h3>Terminal updates: APT, not DNF</h3>
+      <p>
+        Debian 13's main, updates and security repositories are configured. On
+        an installed Kilimanjaro system, refresh package information and review
+        available upgrades with:
+      </p>
+      <pre>
+        <code>{"sudo apt update\nsudo apt upgrade"}</code>
+      </pre>
+      <p>
+        These commands update repository-managed Debian packages. Flatpak apps
+        use <code>flatpak update</code>. Do not mix Fedora RPM repositories or
+        DNF into this Debian-based system. Live-session updates are temporary
+        unless persistence is configured.
+      </p>
+      <h3>Kilimanjaro-specific updates</h3>
+      <p>
+        Versioned base and desktop packages, signed repository snapshot tooling
+        and scoped client configuration are implemented. Public hosting and the
+        owner's trusted archive key still need activation. Until then, Debian
+        updates work, but APT cannot fetch new Kilimanjaro-specific changes from
+        a public project repository.
+      </p>
       <h3>Plan recovery before you need it</h3>
       <p>
         Timeshift is included, but snapshots require configuration and a
@@ -56,9 +79,10 @@ export default function UpdatesRecovery() {
         </li>
       </ul>
       <div className="guide-notice">
-        There is no published Kilimanjaro APT repository or supported signed
-        offline update bundle yet. Recovery is not guaranteed; do not depend on
-        this development build for irreplaceable work.
+        Debian package updates are available through APT and Discover. The
+        project repository is not publicly activated, and signed offline update
+        bundles are not supported yet. Recovery remains unqualified; keep
+        independent backups and use disposable systems for development testing.
       </div>
     </GuideSection>
   );

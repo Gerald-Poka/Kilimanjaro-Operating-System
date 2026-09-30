@@ -5,3 +5,17 @@ output/
 *.iso.sig
 SHA256SUMS
 website/
+.agents/
+.codex/
+.aws/
+.ssh/
+.gnupg/
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*private-key*
+*secret-key*
+*revocation*

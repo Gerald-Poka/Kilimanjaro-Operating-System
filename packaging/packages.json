@@ -1,0 +1,39 @@
+{
+  "kilimanjaro-base": {
+    "description": "Kilimanjaro first-boot, software profiles and network utilities",
+    "depends": "bash, python3, apt, ca-certificates, curl, gnupg, network-manager, systemd, procps, iproute2, pciutils, util-linux, pkexec",
+    "paths": [
+      "opt/kilimanjaro/bin/kilimanjaro-firstboot",
+      "opt/kilimanjaro/bin/kilimanjaro-netmeter",
+      "opt/kilimanjaro/bin/kilimanjaro-software",
+      "usr/share/kilimanjaro",
+      "usr/share/polkit-1/actions/org.kilimanjaro.software.policy",
+      "etc/kilimanjaro/profile",
+      "etc/systemd/system/kilimanjaro-firstboot.service",
+      "etc/systemd/system/kilimanjaro-netmeter.service",
+      "etc/systemd/system/kilimanjaro-netmeter.timer"
+    ]
+  },
+  "kilimanjaro-desktop": {
+    "description": "Kilimanjaro Welcome, network tray and desktop artwork",
+    "depends": "kilimanjaro-base (= {version}), python3-pyqt6, nethogs, xdg-utils, plasma-workspace",
+    "paths": [
+      "opt/kilimanjaro/welcome",
+      "opt/kilimanjaro/bin/kilimanjaro-network-monitor",
+      "opt/kilimanjaro/bin/netparse.py",
+      "usr/bin/kilimanjaro-welcome",
+      "usr/share/applications/org.kilimanjaro.Meet.desktop",
+      "usr/share/applications/org.kilimanjaro.Teams.desktop",
+      "usr/share/applications/org.kilimanjaro.Welcome.desktop",
+      "usr/share/color-schemes/KilimanjaroDark.colors",
+      "usr/share/icons/Kilimanjaro",
+      "usr/share/icons/hicolor/scalable/apps/kilimanjaro-logo.svg",
+      "usr/share/kio/servicemenus/kilimanjaro-open-konsole-here.desktop",
+      "usr/share/pixmaps/kilimanjaro-logo.png",
+      "usr/share/plasma/look-and-feel/org.kilimanjaro.desktop",
+      "usr/share/wallpapers",
+      "etc/xdg/autostart/org.kilimanjaro.NetworkMonitor.desktop",
+      "etc/xdg/autostart/org.kilimanjaro.Welcome.desktop"
+    ]
+  }
+}

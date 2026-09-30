@@ -17,6 +17,11 @@ export default function ReadinessDetails() {
           offline UEFI installation and console login; that does not qualify the
           rebuilt image's installed desktop.
         </p>
+        <div className="guide-notice">
+          The current KVM Secure Boot rerun failed with an unsupported-image
+          error. Software-emulated testing is a separate result, not a fix for
+          that failure or a guarantee of physical firmware compatibility.
+        </div>
         <p>Tested development ISO SHA-256:</p>
         <pre>
           <code>{readiness.sha256}</code>

@@ -2,6 +2,7 @@ SHELL := /bin/bash
 CONTAINER_ENGINE ?= podman
 BUILDER_IMAGE ?= localhost/kilimanjaro-os-builder:trixie
 KILIMANJARO_BUILD_VOLUME ?= kilimanjaro-build
+PACKAGE_VERSION ?= $(shell awk -F '"' '/^KILIMANJARO_PACKAGE_VERSION=/ {print $$2}' config/build.env)
 CONTAINER_RUN = $(CONTAINER_ENGINE) run --rm --privileged \
 	-v "$(CURDIR):/workspace:Z" \
 	-v "$(KILIMANJARO_BUILD_VOLUME):/workspace/build" \
@@ -9,7 +10,8 @@ CONTAINER_RUN = $(CONTAINER_ENGINE) run --rm --privileged \
 
 .PHONY: help validate host-check bootstrap package-check packages configure image release iso \
 	container-image container-iso container-update container-repack container-boot-repack container-package-check \
-	container-profile-check container-shell container-clean iso-check smoke-test smoke-usb smoke-secureboot-usb release-test test vm vm-uefi vm-secureboot clean
+	container-profile-check container-shell container-clean iso-check smoke-test smoke-usb smoke-secureboot-usb release-test test vm vm-uefi vm-secureboot clean \
+	project-packages container-project-packages container-apt-test
 
 help:
 	@echo 'Kilimanjaro OS build targets'
@@ -21,6 +23,8 @@ help:
 	@echo '  make container-iso    Full ISO build with Podman/Docker'
 	@echo '  make container-update Install package changes and rebuild the ISO'
 	@echo '  make container-repack Reapply overlays and quickly rebuild the ISO'
+	@echo '  make container-project-packages Build versioned Kilimanjaro .deb packages'
+	@echo '  make container-apt-test Test signed APT install/upgrade in disposable Docker'
 	@echo '  make container-profile-check Resolve every optional software profile'
 	@echo '  make container-shell  Open a development shell in the builder'
 	@echo '  make container-clean  Remove build state through the container'
@@ -34,6 +38,15 @@ help:
 
 validate:
 	./tests/validate.sh
+
+project-packages:
+	python3 scripts/build-project-packages.py --version "$(PACKAGE_VERSION)"
+
+container-project-packages: container-image
+	$(CONTAINER_RUN) python3 scripts/build-project-packages.py --version "$(PACKAGE_VERSION)"
+
+container-apt-test: container-image
+	$(CONTAINER_ENGINE) run --rm -v "$(CURDIR):/workspace:ro" $(BUILDER_IMAGE) python3 tests/apt-repository-test.py
 
 host-check:
 	./scripts/00-host-check.sh

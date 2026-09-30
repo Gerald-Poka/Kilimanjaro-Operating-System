@@ -20,6 +20,23 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
+# Register custom tools/artwork with dpkg so future signed project repositories
+# can update them. Build in a fresh directory; never silently reuse old packages.
+project_packages=$(mktemp -d "$BUILD_DIR/project-packages-XXXXXX")
+python3 "$SCRIPT_DIR/build-project-packages.py" \
+  --version "$KILIMANJARO_PACKAGE_VERSION" --output "$project_packages"
+cp "$project_packages"/*.deb "$ROOTFS_DIR/tmp/"
+if ! in_chroot apt-get --simulate --no-install-recommends install \
+  "/tmp/kilimanjaro-base_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
+  "/tmp/kilimanjaro-desktop_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
+  > "$project_packages/dependency-plan.txt"; then
+  die 'Project package dependency resolution failed; run the package-update stage first.'
+fi
+if awk '/^Inst / && $2 !~ /^kilimanjaro-/ {missing=1} END {exit !missing}' \
+  "$project_packages/dependency-plan.txt"; then
+  die 'New Debian dependencies are needed; run container-update rather than an offline repack.'
+fi
+
 log 'Applying the Kilimanjaro configuration overlay'
 (cd "$PROJECT_ROOT/overlay" && find . \( -type f -o -type l \) -printf '%P\n' | sort) \
   > "$overlay_manifest_next"
@@ -106,6 +123,11 @@ chmod 0755 \
 sed -i 's/^ENABLED=.*/ENABLED=yes/' "$ROOTFS_DIR/etc/ufw/ufw.conf"
 
 mount_chroot_filesystems
+in_chroot dpkg --force-confold -i \
+  "/tmp/kilimanjaro-base_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
+  "/tmp/kilimanjaro-desktop_${KILIMANJARO_PACKAGE_VERSION}_all.deb"
+rm -f -- "$ROOTFS_DIR/tmp/kilimanjaro-base_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
+  "$ROOTFS_DIR/tmp/kilimanjaro-desktop_${KILIMANJARO_PACKAGE_VERSION}_all.deb"
 in_chroot locale-gen
 in_chroot update-initramfs -u -k all
 in_chroot update-locale \

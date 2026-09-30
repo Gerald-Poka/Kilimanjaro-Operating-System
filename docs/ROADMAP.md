@@ -72,10 +72,15 @@ Exit gate status:
 
 ## Milestone 2 Owned package and update chain
 
-Status: not started.
+Status: base/desktop package builders, signed static APT snapshot generator and
+scoped client configuration implemented. Disposable APT base-package install/
+upgrade, conffile preservation and tamper/expiry rejection tests passed.
+Public hosting, owner archive key, rotation, installed-desktop
+upgrade/recovery qualification and offline bundles remain pending.
+See [APT update implementation](APT-UPDATES.md).
 
 - build `kilimanjaro-base`, `kilimanjaro-desktop`, and archive-keyring packages
-- publish a staging aptly repository
+- activate the signed static repository on reviewed HTTPS hosting
 - define package pinning and Debian security fallback policy
 - implement release-key custody, rotation, and revocation procedures
 - implement signed offline update bundles

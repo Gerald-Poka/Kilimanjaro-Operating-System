@@ -110,6 +110,12 @@ Debian 13 was selected because it is the current stable release and supports the
 
 ## Updates, recovery, sound, and graphics
 
+Debian package updates work through `sudo apt update` followed by
+`sudo apt upgrade`, or KDE Discover. Kilimanjaro-specific base/desktop `.deb`
+packages and signed repository tooling are now implemented; public project
+hosting, archive-key activation and installed-system upgrade qualification
+remain pending. See [APT update implementation and activation](docs/APT-UPDATES.md).
+
 Plasma X11 is the development default: its desktop has been visually verified
 in the Secure Boot VM. Wayland remains available but is not the default while
 its black-screen behavior under software-emulated virtual graphics is investigated.

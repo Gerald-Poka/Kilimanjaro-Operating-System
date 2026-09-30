@@ -4,6 +4,16 @@ set -euo pipefail
 ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 failures=0
 
+python3 - <<'PY'
+from pathlib import Path
+import json
+json.loads(Path("packaging/packages.json").read_text())
+for parent in (Path("scripts"), Path("tests")):
+    for source in parent.glob("*.py"):
+        compile(source.read_text(), str(source), "exec")
+print("PASS: packaging manifest and build/test Python syntax")
+PY
+
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
   failures=$((failures + 1))
