@@ -268,6 +268,12 @@ test("home, navigation and responsive layout", async ({ page }, info) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "A new perspective",
   );
+  await expect(page.locator(".hero-description")).toContainText(
+    "Your games. Your creations. Your everyday.",
+  );
+  await expect(page.locator(".hero-description")).toContainText(
+    "add Gaming Ready or Creator Studio",
+  );
   await expect(page.locator(".hero-scene.active")).toHaveCSS(
     "background-image",
     /sunset\.webp/,

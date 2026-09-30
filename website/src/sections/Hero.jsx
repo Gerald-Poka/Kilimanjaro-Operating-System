@@ -53,8 +53,10 @@ export default function Hero() {
           <br />A new <span>perspective.</span>
         </h1>
         <p className="hero-description">
-          Meet Kilimanjaro OS. A thoughtfully crafted Linux desktop for
-          learning, working and creating—online or off.
+          Your games. Your creations. Your everyday. Kilimanjaro OS brings them
+          together on a KDE Linux desktop you can make your own. Record and
+          stream with OBS Studio, get everyday essentials included, and add
+          Gaming Ready or Creator Studio for the tools you need.
         </p>
         <div className="hero-actions">
           <Link className="button primary" to="/downloads">
