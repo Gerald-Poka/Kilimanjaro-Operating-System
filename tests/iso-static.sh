@@ -103,14 +103,43 @@ cmp -s "$report_dir/kilimanjaro-LICENSE.txt" "$ROOT_DIR/LICENSE" || {
   exit 1
 }
 for package in firmware-intel-graphics firmware-amd-graphics firmware-intel-sound \
-  firmware-sof-signed firmware-atheros firmware-mediatek intel-microcode \
-  amd64-microcode bluez bluedevil mesa-vulkan-drivers vulkan-tools; do
+  firmware-sof-signed firmware-atheros firmware-mediatek firmware-nvidia-gsp \
+  intel-microcode amd64-microcode bluez bluedevil mesa-vulkan-drivers vulkan-tools \
+  fwupd smartmontools lm-sensors ethtool; do
   grep -Eq "^$package " "$report_dir/filesystem.packages" || {
     printf 'FAIL: physical-PC baseline package missing: %s\n' "$package" >&2
     exit 1
   }
 done
-for package in e2fsprogs btrfs-progs xfsprogs cracklib-runtime wamerican squashfs-tools efibootmgr; do
+
+# Capabilities the documented product features depend on. A release whose ISO
+# cannot print, cannot list software, or cannot spellcheck is not releasable.
+for package in plasma-discover packagekit \
+  cups cups-client cups-browsed foomatic-db-compressed-ppds sane-utils \
+  orca kmag espeak-ng ibus plasma-nano libpam-kwallet-common mesa-utils; do
+  grep -Eq "^$package " "$report_dir/filesystem.packages" || {
+    printf 'FAIL: documented desktop capability missing: %s\n' "$package" >&2
+    exit 1
+  }
+done
+
+for package in hunspell-sw hunspell-en-gb p7zip-full; do
+  grep -Eq "^$package " "$report_dir/filesystem.packages" || {
+    printf 'FAIL: documented application missing: %s\n' "$package" >&2
+    exit 1
+  }
+done
+
+# Deliberately absent. These must never reappear in a published image.
+for package in nvidia-settings clamav clamav-daemon ttf-mscorefonts-installer; do
+  if grep -Eq "^$package " "$report_dir/filesystem.packages"; then
+    printf 'FAIL: package removed by policy is present: %s\n' "$package" >&2
+    exit 1
+  fi
+done
+
+for package in e2fsprogs btrfs-progs xfsprogs cracklib-runtime wamerican \
+  efibootmgr grub-pc-bin cryptsetup-initramfs iproute2 unattended-upgrades; do
   grep -Eq "^$package " "$report_dir/filesystem.packages" || {
     printf 'FAIL: required installer utility package missing: %s\n' "$package" >&2
     exit 1
@@ -122,6 +151,24 @@ for package in kilimanjaro-base kilimanjaro-desktop; do
     exit 1
   }
 done
+
+# The kernel must be the 6.x series the packaged NVIDIA DKMS module builds
+# against. Its ABI package name carries the version, so this also catches an
+# image that picked up a 7.x kernel that has no working proprietary driver.
+if ! grep -Eq '^linux-image-6\.[0-9]+\.[0-9]+.*-amd64 ' "$report_dir/filesystem.packages"; then
+  printf 'FAIL: no 6.x kernel package in the live system manifest\n' >&2
+  exit 1
+fi
+if grep -Eq '^linux-image-(7|8)\.' "$report_dir/filesystem.packages"; then
+  printf 'FAIL: 7.x-or-newer kernel present; no packaged NVIDIA driver builds against it\n' >&2
+  exit 1
+fi
+
+# Headers must match the kernel series or the NVIDIA module cannot build.
+if ! grep -Eq '^linux-headers-6\.[0-9]+' "$report_dir/filesystem.packages"; then
+  printf 'FAIL: no matching 6.x kernel headers; DKMS/NVIDIA builds would fail\n' >&2
+  exit 1
+fi
 
 grep -Eq '^shim-signed ' "$report_dir/filesystem.packages" || {
   printf 'FAIL: shim-signed is missing from the live system package manifest\n' >&2
@@ -138,4 +185,7 @@ printf 'PASS: bootable UEFI entry present\n'
 printf 'PASS: PE signatures present on shim, GRUB and kernel (firmware trust requires boot testing)\n'
 printf 'PASS: root-owned installed filesystem and packaged GPL license verified\n'
 printf 'PASS: explicit physical-PC firmware/graphics package baseline present\n'
+printf 'PASS: 6.x kernel and matching headers present, no 7.x kernel\n'
+printf 'PASS: documented desktop capabilities present (Discover APT, printing, scanning, a11y, IME)\n'
+printf 'PASS: removed-by-policy packages absent from the image\n'
 printf 'Report: %s\n' "$report_path"

@@ -1,0 +1,25 @@
+# Gaming pillar.
+#
+# Steam has no installation candidate on an amd64-only system; the bootstrap
+# stage enables the i386 architecture for exactly this reason. Steam and
+# wine32 are therefore useless if that multiarch step is ever removed.
+steam
+wine
+wine32
+winetricks
+# Performance and frame pacing for OpenGL/Vulkan titles.
+gamemode
+mangohud
+# The proprietary NVIDIA driver is shipped so NVIDIA machines get hardware
+# acceleration. It is a DKMS module, so it needs dkms plus linux-headers
+# matching the running kernel; those live in base.list because the package
+# build runs with --no-install-recommends and would otherwise omit the headers.
+nvidia-driver
+nvidia-settings
+# Vulkan/OpenGL diagnostics, already partly in desktop.list; kept explicit so
+# removing a pillar package fails validation instead of silently degrading.
+vulkan-tools
+libglvnd0
+# gamescope is intentionally absent: it is not in Debian 13 stable. Nothing in
+# the build selects it automatically, so users opt in explicitly with:
+#   sudo apt install -t trixie-backports gamescope

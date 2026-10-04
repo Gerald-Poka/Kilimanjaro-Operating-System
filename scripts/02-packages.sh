@@ -44,13 +44,62 @@ cat > "$ROOTFS_DIR/etc/apt/sources.list" <<EOF
 deb $DEBIAN_MIRROR $DEBIAN_SUITE main contrib non-free non-free-firmware
 deb $DEBIAN_MIRROR $DEBIAN_SUITE-updates main contrib non-free non-free-firmware
 deb $DEBIAN_SECURITY_MIRROR $DEBIAN_SUITE-security main contrib non-free non-free-firmware
+deb $DEBIAN_MIRROR $DEBIAN_BACKPORTS_SUITE main contrib non-free non-free-firmware
 EOF
 
+# Backports is configured but never preferred, so nothing backported can be
+# selected automatically. The kernel is intentionally left to resolve from the
+# stable suite: Linux 6.12 is the newest kernel the packaged proprietary NVIDIA
+# driver builds against, and there is no NVIDIA driver in any Debian suite that
+# supports 7.x. See the KILIMANJARO_KERNEL_MIN_MAJOR note in config/build.env.
+#
+# Keeping backports reachable lets installed systems opt into single packages
+# (gamescope, for example) with "apt install -t", and these files stay in the
+# image so those systems inherit the same narrow policy.
+install -d -m 0755 "$ROOTFS_DIR/etc/apt/preferences.d"
+cat > "$ROOTFS_DIR/etc/apt/preferences.d/50-kilimanjaro-backports" <<EOF
+# Kilimanjaro resolves everything from the stable suite. Backports is available
+# only when explicitly requested with -t.
+Package: *
+Pin: release n=$DEBIAN_SUITE
+Pin-Priority: 500
+
+Package: *
+Pin: release n=$DEBIAN_SUITE-updates
+Pin-Priority: 500
+
+Package: *
+Pin: release n=$DEBIAN_SUITE-security
+Pin-Priority: 500
+
+Package: *
+Pin: release n=$DEBIAN_BACKPORTS_SUITE
+Pin-Priority: 100
+EOF
+
+# Installs default to the stable suite, which is also where the kernel and the
+# matching headers come from. Both must resolve from the same suite: pairing a
+# kernel with headers from a different series breaks every DKMS module build,
+# including NVIDIA.
+cat > "$ROOTFS_DIR/etc/apt/apt.conf.d/99-kilimanjaro-default-release" <<EOF
+APT::Default-Release "$DEBIAN_SUITE";
+EOF
+
+# Steam and wine32 have no installation candidate on an amd64-only system, so
+# 32-bit support is a hard requirement of the gaming pillar rather than an
+# optimisation. This must run before the index refresh below, or the i386
+# indexes are never fetched and the install fails later with a confusing
+# "no installation candidate" error.
+if ! in_chroot dpkg --print-foreign-architectures | grep -qx i386; then
+  log 'Enabling i386 multiarch for Steam and 32-bit Wine titles'
+  in_chroot dpkg --add-architecture i386
+fi
+
 mapfile -t packages < <(
-  for package_file in \
-    "$PROJECT_ROOT/config/packages/base.list" \
-    "$PROJECT_ROOT/config/packages/desktop.list" \
-    "$PROJECT_ROOT/config/packages/apps.list"; do
+  for package_file in "$PROJECT_ROOT"/config/packages/*.list; do
+    [[ -e "$package_file" ]] || die "No package manifests found in $PROJECT_ROOT/config/packages"
+    # optional.list documents deliberate exclusions; it is never installed.
+    [[ $(basename "$package_file") == optional.list ]] && continue
     load_package_list "$package_file"
   done | sort -u
 )

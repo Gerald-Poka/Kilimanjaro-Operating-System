@@ -1,5 +1,12 @@
-# Kernel and live-boot foundation
+# Kernel and live-boot foundation. Kernel and headers come from the stable
+# suite, which is the newest series the packaged NVIDIA DKMS module builds
+# against. See the kernel note in config/build.env.
 linux-image-amd64
+# Headers must match the running kernel or DKMS module builds fail, including
+# the NVIDIA driver. They are not pulled in by --no-install-recommends, and
+# nothing pins them to a different series than the kernel itself.
+linux-headers-amd64
+dkms
 initramfs-tools
 live-boot
 live-config
@@ -20,6 +27,11 @@ curl
 iproute2
 gnupg
 rsync
+man-db
+
+# Updates: machinery installed, but APT::Periodic stays 0 so nothing runs
+# without the user's consent. See overlay/etc/apt/apt.conf.d/20auto-upgrades.
+unattended-upgrades
 
 # Hardware and networking
 network-manager
@@ -36,13 +48,53 @@ firmware-intel-sound
 firmware-sof-signed
 firmware-atheros
 firmware-mediatek
+# GSP firmware plus the legacy blob set. Both are required by the proprietary
+# NVIDIA driver shipped in gaming.list and by nouveau on newer cards.
+firmware-nvidia-gsp
+firmware-nvidia-graphics
 intel-microcode
 amd64-microcode
+# Firmware updates over LVFS. Without this, firmware problems are the largest
+# single cause of post-install hardware faults and there is no in-OS remedy.
+fwupd
 usb-modeswitch
 modemmanager
+mobile-broadband-provider-info
+# NetworkManager VPN front ends. Installed disabled-by-default; the services
+# are only reachable once the user configures a connection.
+network-manager-gnome
+network-manager-openvpn-gnome
+network-manager-l2tp-gnome
+# School file servers over SMB/CIFS and NFS.
+samba-common
+cifs-utils
+nfs-common
+thermald
 dosfstools
 e2fsprogs
 btrfs-progs
 xfsprogs
 exfatprogs
 ntfs-3g
+
+# Diagnostics used by scripts/hardware-report.sh and for fault reporting
+iputils-ping
+traceroute
+bind9-dnsutils
+mtr
+whois
+smartmontools
+lm-sensors
+hdparm
+nvme-cli
+ethtool
+rfkill
+# aplay backs the audio-hardware section of the hardware report.
+alsa-utils
+
+# Baseline developer and support tooling
+git
+wget
+# Installed for remote administration. Kept disabled by the systemd preset;
+# enable deliberately per site.
+openssh-server

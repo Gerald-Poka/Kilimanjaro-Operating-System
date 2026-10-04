@@ -3,12 +3,21 @@ firefox-esr
 libreoffice
 libreoffice-kf6
 libreoffice-plasma
-hunspell-sw
 evince
 fonts-crosextra-carlito
 fonts-crosextra-caladea
 fonts-liberation
 fonts-noto-core
+
+# Spellcheck. The Kiswahili dictionary alone leaves every English document
+# fully flagged, because sw_TZ is the default locale.
+hunspell-sw
+hunspell-en-gb
+
+# Archive handling
+p7zip-full
+unrar
+unar
 
 # Education and offline content
 kiwix
@@ -17,10 +26,8 @@ gcompris-qt
 tuxmath
 klavaro
 
-# Security and bandwidth visibility
+# Bandwidth visibility and firewall
 vnstat
-clamav
-clamav-daemon
 ufw
 apparmor
 apparmor-utils

@@ -47,6 +47,25 @@ After changing a package list under `config/packages/`:
 make container-update
 ```
 
+Incremental targets assume `build/rootfs` is not older than the last ISO. If
+the two have drifted, a repack or update will silently drop whatever the older
+rootfs never installed. `make test` re-reads the finished ISO and fails on any
+missing package, so run it after every rebuild rather than trusting the
+incremental path. When in doubt use a clean `make container-iso`.
+
+`make validate` asserts the capabilities the documentation promises (Discover's
+APT backend, printing, scanning, accessibility, input methods, spellcheck,
+firmware updates) and also asserts that deliberately removed packages stay
+removed, so a capability cannot quietly disappear from a list. Adding a
+package to an image list needs no approval; removing one that a listed check
+depends on does.
+
+To activate the project APT archive channel, set `KILIMANJARO_APT_REPO_URL`,
+`KILIMANJARO_APT_REPO_FINGERPRINT` and `KILIMANJARO_APT_REPO_KEY` together in
+`config/build.env`. Leave them empty to ship without a channel. Never commit a
+private key; `config/build.env` holds a path to a public key only. See
+[APT update implementation and activation](APT-UPDATES.md).
+
 After changing optional manifests under
 `overlay/usr/share/kilimanjaro/profiles/`, verify all profiles in the disposable
 builder container:
@@ -83,6 +102,103 @@ On a host without KVM access the smoke test uses software emulation and can take
 ```bash
 SMOKE_TIMEOUT=300 make smoke-test
 ```
+
+## Package manifests and the four pillars
+
+Manifests live in `config/packages/` and `scripts/02-packages.sh` loads them by
+glob, excluding `optional.list` (which only documents deliberate exclusions).
+Adding a pillar is therefore a matter of dropping in a new `.list` file; nothing
+needs registering in the script.
+
+| Manifest | Pillar |
+| --- | --- |
+| `base.list` | kernel, firmware, networking, storage, diagnostics |
+| `desktop.list` | KDE Plasma session, settings, accessibility, printing |
+| `apps.list` | everyday applications and archives |
+| `development.list` | programming toolchain |
+| `creator.list` | content creation |
+| `gaming.list` | Steam, Wine, performance overlay, NVIDIA driver |
+
+Three build-level requirements are easy to break and are worth understanding
+before changing any of this:
+
+- **i386 multiarch.** `steam` and `wine32` are i386 binaries in Debian 13; on an
+  amd64-only system `steam` has no installation candidate at all. The package
+  stage runs `dpkg --add-architecture i386` before refreshing the indexes.
+- **`linux-headers-amd64` must be declared explicitly.** The build uses
+  `--no-install-recommends`, which omits the headers that `dkms` needs, so the
+  NVIDIA module would never build. Kernel and headers must resolve from the same
+  suite; anything that pins either above stable risks pairing mismatched series
+  and breaking every DKMS build.
+- **Package names are suite-specific.** Debian 13 renamed or dropped a number of
+  packages this project previously referenced, including `kwallet-pam`
+  (`libpam-kwallet-common`), `partitioneditor` (`partitionmanager`), `ksysguard`
+  (`plasma-systemmonitor`), `kio-gvfs` (`kio-extras`), `dnsutils`
+  (`bind9-dnsutils`), `firmware-nvidia-nonfree` (`firmware-nvidia-gsp` and
+  `firmware-nvidia-graphics`), and `plasma-discover-backend-aptkde`, which no
+  longer exists because Discover handles APT itself. `virtualbox-guest-x11` and
+  `kde-plasma-addons` are gone from trixie entirely. `make validate` only checks
+  that names are declared, not that apt can resolve them, so run
+  `make container-package-check` after touching any manifest. An unresolvable
+  name aborts the whole install.
+
+## The kernel comes from the stable suite
+
+The image does not compile a kernel. It installs Debian's `linux-image-amd64`
+from `$DEBIAN_SUITE` (trixie), currently 6.12.x, together with the matching
+headers.
+
+This is deliberate, and it is the reason the image ships a working proprietary
+NVIDIA driver. **6.12 is the newest kernel series that any NVIDIA driver in any
+Debian suite builds against.** Debian ships `nvidia-driver` 550.163.01 in stable,
+`trixie-backports` and sid alike; that driver predates Linux 7.x by roughly two
+years and fails to compile against it. The concrete breakages, all confirmed by
+building DKMS against `linux-headers-7.1.13+deb13-amd64`:
+
+- `vm_area_struct::__vm_flags` was removed, and `vm_flags` is now `const`
+- `in_irq()` was removed in favour of `in_interrupt()`
+- `dma_map_ops::map_resource` was removed while the `dma_map_resource()`
+  wrapper survived, so NVIDIA's own conftest reports a false positive
+- `nvidia-drm.ko` additionally fails on the removed `DRM_DEBUG`/`DRM_ERROR`/
+  `DRM_INFO` printk family, the removed `.state` member on DRM atomic state
+  structs, a changed `drm_mode_create_dumb`, and DMA-fence API changes
+
+The core driver can be patched through the first three items, but
+`nvidia-drm.ko` needs substantially more, and doing so would mean carrying a
+permanent private patch against proprietary source, reapplied on every
+`nvidia-dkms` update. sid is not an escape hatch: sid itself runs a 7.2 kernel
+and still carries the same unbuildable 550.163.01. Shipping 7.x would therefore
+have meant either shipping nouveau with no NVIDIA acceleration or maintaining
+that fork, so the kernel stays on 6.12.
+
+Two files in the image make the suite policy work, and both are intentionally
+kept in the rootfs so installed systems inherit the same narrow policy:
+
+- `/etc/apt/preferences.d/50-kilimanjaro-backports` pins the stable suites at
+  500 and all of backports at 100. Nothing is pinned above stable, so the kernel
+  and headers both resolve from stable and no backported package is ever
+  selected automatically.
+- `/etc/apt/apt.conf.d/99-kilimanjaro-default-release` sets
+  `APT::Default-Release` to the stable suite.
+
+Backports remains reachable on purpose so users can opt into individual
+packages, for example `sudo apt install -t trixie-backports gamescope`.
+
+To confirm the wiring before building:
+
+```bash
+apt-cache policy linux-image-amd64 linux-headers-amd64
+# both candidates must be the stable 6.12 series
+```
+
+`KILIMANJARO_KERNEL_MIN_MAJOR` in `config/build.env` is the floor, and
+`scripts/04-image.sh` refuses to assemble an ISO whose newest `/boot/vmlinuz-*`
+is older than it. Note that `scripts/04-image.sh` picks the kernel by
+modification time, so it takes whatever is newest rather than a hardcoded
+version. Do not add `sid` or `unstable` as a kernel source: it pulls an unstable
+userspace, not just a kernel. Do not replace this with a self-compiled kernel
+without also solving Secure Boot signing, since a locally built kernel is not
+signed by Debian and the current chain will reject it.
 
 ## Open the graphical VM
 

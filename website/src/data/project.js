@@ -5,6 +5,8 @@ export const readiness = {
   version: "0.1.0",
   updated: "30 September 2026",
   sha256: "8ddb15abc7570273bfec077da6cacf1c67249803d2d747072e6e28cf9d4a9589",
+  notice:
+    "This page describes the ISO with the checksum above. Source corrections made after that ISO was built are not in it yet.",
   passed: [
     "BIOS optical live boot: graphical target, SDDM and Plasma running.",
     "BIOS virtual USB live boot: graphical target, SDDM and Plasma running.",
@@ -23,8 +25,12 @@ export const readiness = {
       "Qualify Wi-Fi, Bluetooth, audio, camera, displays, input, battery and suspend/resume on physical PCs.",
     ],
     [
+      "Printing & scanning",
+      "Printing and scanning are now packaged, but no physical printer or scanner has been tested.",
+    ],
+    [
       "Graphics & gaming",
-      "Test NVIDIA drivers and Secure Boot enrollment, Intel/AMD acceleration, hybrid graphics, ASUS ROG controls, games and recording.",
+      "Test Intel/AMD acceleration, hybrid graphics, games and recording. Steam, Wine with 32-bit support, GameMode, MangoHud and the proprietary NVIDIA driver are packaged, but no title or GPU has been tested yet, and DKMS module rebuilds across kernel updates are unverified.",
     ],
     [
       "Updates & recovery",
@@ -32,7 +38,7 @@ export const readiness = {
     ],
     [
       "Everyday features",
-      "Validate application installation, calls and screen sharing, trusted-network KDE Connect pairing, network monitoring and Kiswahili translation.",
+      "Validate application installation, calls and screen sharing, trusted-network KDE Connect pairing, network monitoring, screen reader and magnifier, and Kiswahili translation.",
     ],
     [
       "Public release trust",

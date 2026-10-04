@@ -73,11 +73,16 @@ export default function DesktopSoftware() {
         Kiwix content packs are separate from the OS.
       </p>
       <div className="guide-notice">
-        NVIDIA Settings is included, but this does not mean the proprietary
-        driver is installed or qualified. Physical hybrid graphics, NVIDIA
-        module signing, ASUS ROG fan profiles and graphics-mode switching still
-        need integration/testing. Do not apply unverified tuning scripts to your
-        laptop.
+        The proprietary NVIDIA driver is included along with its GSP firmware,
+        so NVIDIA cards get hardware acceleration without an online install and
+        without a Secure Boot module enrolment, because the target deployment
+        runs with Secure Boot disabled in the PC BIOS. If you enable Secure Boot
+        on a machine, the driver's self-signed dkms MOK is not enrolled and the
+        modules will be rejected, so treat Secure Boot as unsupported. It is
+        built by dkms, so each kernel update rebuilds the module and that
+        rebuild is not yet verified. Physical hybrid graphics, ASUS ROG fan
+        profiles and graphics-mode switching still need integration/testing. Do
+        not apply unverified tuning scripts to your laptop.
       </div>
     </GuideSection>
   );

@@ -65,11 +65,38 @@ re-sign before expiry even when package versions do not change. Do not disable
 expiry checks to conceal missed maintenance. Signed metadata is not proof that
 the software itself is free of vulnerabilities.
 
-## Activation — intentionally not performed yet
+## Activation — hosting still pending, but the image is now wired for it
 
 The owner chose hosting **after local tests**. There is no active public project
 APT endpoint, trusted project archive key or supported offline update bundle.
 Do not advertise project updates as available until activation is verified.
+
+The image ships **no archive source**, so `kilimanjaro-base` and
+`kilimanjaro-desktop` cannot yet update themselves on an installed machine.
+That is the honest state, and it is now a deliberate one rather than an
+oversight: the build knows how to install the channel and leaves it off until
+hosting exists.
+
+### Enabling it
+
+Set all three variables in `config/build.env` together:
+
+```
+KILIMANJARO_APT_REPO_URL="https://YOUR-REVIEWED-HOST/apt"
+KILIMANJARO_APT_REPO_FINGERPRINT="FULL_40_OR_64_HEX_ARCHIVE_KEY_FINGERPRINT"
+KILIMANJARO_APT_REPO_KEY="/path/to/ASCII_ARMORED_PUBLIC_KEY.asc"
+```
+
+`03-configure.sh` then runs `configure-apt-source.py` itself and installs the
+keyring to `/etc/apt/keyrings/kilimanjaro-archive-keyring.gpg`, the source to
+`/etc/apt/sources.list.d/kilimanjaro.sources` and the pinning to
+`/etc/apt/preferences.d/kilimanjaro.pref`. The same URL, fingerprint and
+public-key checks that guard a maintainer workstation therefore guard the image,
+and the build fails rather than shipping an unverified source. Leaving the URL
+empty is valid and ships no channel; setting the URL without a matching
+fingerprint and key is an error. Never place a private key in `build.env`.
+
+### Before enabling it
 
 1. Choose HTTPS hosting for the snapshot's entire directory tree. Keep pool
    artifacts immutable and retain old package URLs. Publish pool files and
@@ -78,7 +105,7 @@ Do not advertise project updates as available until activation is verified.
 2. Establish archive-key custody, expiry, revocation and key rotation. Publish
    the full fingerprint through a trusted independent channel. A downloaded
    key from the same server alone does not establish publisher identity.
-3. Generate client files after independently checking the fingerprint:
+3. Generate the client files on a workstation first and read them:
 
    ```sh
    python3 scripts/configure-apt-source.py \
@@ -89,18 +116,15 @@ Do not advertise project updates as available until activation is verified.
    ```
 
    This writes files for review only; it does not install or activate them.
-   After checking them, install the public key as
-   `/etc/apt/keyrings/kilimanjaro-archive-keyring.gpg`, source definition as
-   `/etc/apt/sources.list.d/kilimanjaro.sources` and pinning as
-   `/etc/apt/preferences.d/kilimanjaro.pref`, root-owned/readable. No `apt-key`,
-   `trusted=yes` or disabled signature verification is used. Pinning allows
-   project package names but excludes unrelated Debian packages from this origin.
+   No `apt-key`, `trusted=yes` or disabled signature verification is used.
+   Pinning allows project package names but excludes unrelated Debian packages
+   from this origin.
 4. Test the HTTPS source in a fresh disposable client: verify `apt update`,
    `apt-cache policy kilimanjaro-base kilimanjaro-desktop`, installation and
    upgrades. Test invalid signatures, expired metadata and altered downloads.
    Confirm Debian security sources still work and no unrelated packages change.
-5. Add verified public-key/source configuration to a new ISO, qualify installed
-   upgrades/reboot/recovery, and only then publish updated user instructions.
+5. Rebuild the ISO with the variables set, then qualify installed
+   upgrades/reboot/recovery before publishing updated user instructions.
 
 If the activated project source is unavailable or expired, fix the hosting or
 refresh its signed metadata; never disable signature/expiry checks. An administrator

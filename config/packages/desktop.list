@@ -1,10 +1,18 @@
 # Polished KDE Plasma desktop on the Debian stable base
 xorg
+# Declared explicitly: the build installs with --no-install-recommends, so
+# these must not be left to be pulled in transitively by xorg.
+xserver-xorg-video-all
+xserver-xorg-input-all
 kde-plasma-desktop
 systemsettings
 kinfocenter
 calamares
 calamares-settings-debian
+# Provides unsquashfs, which Calamares needs to unpack the live filesystem.
+# Calamares only Recommends squashfs-tools and the build installs with
+# --no-install-recommends, so it must be declared or the installer ships broken
+# and scripts/04-image.sh refuses the image.
 squashfs-tools
 cracklib-runtime
 wamerican
@@ -19,6 +27,9 @@ keyutils
 kwin-x11
 sddm
 sddm-theme-breeze
+# KWallet must be unlocked by the display manager at login, otherwise
+# wallet-backed prompts (saved Wi-Fi, wallpaper) fail.
+libpam-kwallet-common
 plasma-nm
 plasma-pa
 bluez
@@ -26,7 +37,11 @@ bluedevil
 mesa-vulkan-drivers
 libgl1-mesa-dri
 vulkan-tools
+# Input methods and an on-screen keyboard for touch and tablet hardware.
+ibus
+plasma-nano
 powerdevil
+powertop
 polkit-kde-agent-1
 kde-config-gtk-style
 breeze-gtk-theme
@@ -34,6 +49,8 @@ breeze-cursor-theme
 papirus-icon-theme
 kde-spectacle
 dolphin
+kio-extras
+kio-fuse
 konsole
 kate
 ark
@@ -42,9 +59,8 @@ gwenview
 kcalc
 pavucontrol
 timeshift
-nvidia-settings
-kio-extras
-kio-fuse
+plasma-systemmonitor
+partitionmanager
 ffmpegthumbs
 xdg-desktop-portal-kde
 xdg-desktop-portal-gtk
@@ -52,6 +68,36 @@ polkitd
 pkexec
 gvfs-backends
 udisks2
+
+# Printing. The desktop ships printing enabled; see the systemd preset.
+cups
+cups-client
+cups-browsed
+cups-pk-helper
+cups-filters
+printer-driver-cups-pdf
+# mDNS responder. cups-browsed discovers network printers over mDNS, so it needs
+# this; --no-install-recommends would not pull it in. Enabled in
+# scripts/03-configure.sh, so the manifest entry is load-bearing, not optional.
+avahi-daemon
+# Not foomatic-db: foomatic-db-compressed-ppds Conflicts and Breaks it, so
+# requesting both makes the whole install unresolvable.
+foomatic-db-compressed-ppds
+
+# Scanning
+sane-utils
+
+# Accessibility
+orca
+kmag
+espeak-ng
+
+# Graphics and storage diagnostics for hardware qualification
+mesa-utils
+
+# Guest integration so the live image behaves in QEMU, VMware and VirtualBox
+qemu-guest-agent
+spice-vdagent
 
 # Audio and common desktop integration
 pipewire-audio
@@ -65,6 +111,15 @@ plymouth
 plymouth-themes
 python3-pyqt6
 nethogs
+# Discover lists APT packages from plasma-discover itself; Debian 13 has no
+# separate plasma-discover-backend-aptkde. The Flatpak backend is separate and
+# still required, otherwise the catalogue shows only offline updates.
 plasma-discover
+packagekit
 plasma-discover-backend-flatpak
 pciutils
+
+# Media codecs beyond the base gstreamer set
+gstreamer1.0-plugins-bad
+gstreamer1.0-plugins-ugly
+libavcodec-extra

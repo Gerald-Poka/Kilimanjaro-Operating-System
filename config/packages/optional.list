@@ -4,3 +4,16 @@
 # TurboWarp Desktop (no Debian package; packaging decision required)
 # Kolibri content channels (distributed as separate content packs)
 
+# Excluded on purpose, not merely pending review:
+# ttf-mscorefonts-installer - requires EULA acceptance and a SourceForge
+#   download during a non-interactive chroot install, which breaks the build
+#   and contradicts offline-first delivery. Use fonts-liberation instead.
+# libdvdcss2 - DVD playback is not a school requirement.
+# tlp - conflicts with the KDE powerdevil power management already shipped.
+# zram-tools - replaces swap wholesale; needs memory qualification first.
+# clamav / clamav-daemon - 18 MB of library plus a daemon that cannot
+#   function without downloaded signature databases, which an offline image
+#   cannot carry. Previously shipped disabled and masked, which implied
+#   protection that did not exist. Available from the online path on request.
+# seahorse - the archive keyring ships pre-trusted via Signed-By, so users
+#   have no key to import by hand.

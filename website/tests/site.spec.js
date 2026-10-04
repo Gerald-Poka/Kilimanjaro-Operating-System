@@ -12,7 +12,13 @@ test("release status separates passed virtual tests from pending physical qualif
   await expect(page.locator("#passed-checks")).toContainText(
     "Secure Boot enabled",
   );
-  await expect(page.locator("#release-gates article")).toHaveCount(6);
+  await expect(page.locator("#release-gates article")).toHaveCount(7);
+  await expect(page.locator("#release-gates")).toContainText(
+    "Printing & scanning",
+  );
+  await expect(page.locator("#passed-checks")).toContainText(
+    "Source corrections made after that ISO was built are not in it yet",
+  );
   await expect(page.locator("main")).toContainText(
     "No physical machine has been qualified yet",
   );

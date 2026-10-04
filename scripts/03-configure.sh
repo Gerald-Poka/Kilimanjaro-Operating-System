@@ -15,6 +15,7 @@ overlay_manifest="$BUILD_DIR/overlay-manifest.txt"
 overlay_manifest_next="$BUILD_DIR/overlay-manifest.next"
 
 cleanup() {
+  restore_runtime_dns_link || true
   unmount_chroot_filesystems
   rm -f -- "$overlay_manifest_next"
 }
@@ -26,12 +27,29 @@ project_packages=$(mktemp -d "$BUILD_DIR/project-packages-XXXXXX")
 python3 "$SCRIPT_DIR/build-project-packages.py" \
   --version "$KILIMANJARO_PACKAGE_VERSION" --output "$project_packages"
 cp "$project_packages"/*.deb "$ROOTFS_DIR/tmp/"
+
+# The package stage removes the apt lists when it finishes, so the index is gone
+# by now. The resolution below still needs it: APT validates
+# APT::Default-Release against the suites it knows about, and with no lists it
+# rejects the release as invalid before it can resolve anything. Refresh it for
+# the resolution, then drop it again so the image ships no cached index.
+mount_chroot_filesystems
+prepare_chroot_dns
+in_chroot apt-get update
+
 if ! in_chroot apt-get --simulate --no-install-recommends install \
   "/tmp/kilimanjaro-base_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
   "/tmp/kilimanjaro-desktop_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
   > "$project_packages/dependency-plan.txt"; then
   die 'Project package dependency resolution failed; run the package-update stage first.'
 fi
+
+in_chroot apt-get clean
+rm -rf -- "$ROOTFS_DIR/var/lib/apt/lists/"*
+restore_runtime_dns_link
+# Unmount here rather than relying on the exit trap: the overlay copy below
+# walks the whole rootfs and cannot copy a mounted /proc, /sys or /dev.
+unmount_chroot_filesystems
 if awk '/^Inst / && $2 !~ /^kilimanjaro-/ {missing=1} END {exit !missing}' \
   "$project_packages/dependency-plan.txt"; then
   die 'New Debian dependencies are needed; run container-update rather than an offline repack.'
@@ -122,6 +140,45 @@ chmod 0755 \
 
 sed -i 's/^ENABLED=.*/ENABLED=yes/' "$ROOTFS_DIR/etc/ufw/ufw.conf"
 
+configure_archive_channel() {
+  local staged
+  [[ -n "${KILIMANJARO_APT_REPO_URL:-}" ]] || {
+    log 'Archive update channel not configured; shipping without an archive source.'
+    return 0
+  }
+  [[ -n "${KILIMANJARO_APT_REPO_FINGERPRINT:-}" && -n "${KILIMANJARO_APT_REPO_KEY:-}" ]] || \
+    die 'KILIMANJARO_APT_REPO_URL is set, so KILIMANJARO_APT_REPO_FINGERPRINT and KILIMANJARO_APT_REPO_KEY are both required.'
+  [[ -f "${KILIMANJARO_APT_REPO_KEY}" ]] || \
+    die "Archive public key not found: $KILIMANJARO_APT_REPO_KEY"
+
+  # Reuse the review tool so the URL, fingerprint and key checks that guard a
+  # maintainer workstation also guard the image.
+  staged=$(mktemp -d "$BUILD_DIR/archive-client-XXXXXX")
+  if ! python3 "$SCRIPT_DIR/configure-apt-source.py" \
+    --url "$KILIMANJARO_APT_REPO_URL" \
+    --public-key "$KILIMANJARO_APT_REPO_KEY" \
+    --fingerprint "$KILIMANJARO_APT_REPO_FINGERPRINT" \
+    --output "$staged" >/dev/null; then
+    rm -rf -- "$staged"
+    die 'Archive client configuration failed validation; refusing to ship an unverified source.'
+  fi
+
+  install -d -m 0755 \
+    "$ROOTFS_DIR/etc/apt/keyrings" \
+    "$ROOTFS_DIR/etc/apt/sources.list.d" \
+    "$ROOTFS_DIR/etc/apt/preferences.d"
+  install -m 0644 "$staged/kilimanjaro-archive-keyring.gpg" \
+    "$ROOTFS_DIR/etc/apt/keyrings/kilimanjaro-archive-keyring.gpg"
+  install -m 0644 "$staged/kilimanjaro.sources" \
+    "$ROOTFS_DIR/etc/apt/sources.list.d/kilimanjaro.sources"
+  install -m 0644 "$staged/kilimanjaro.pref" \
+    "$ROOTFS_DIR/etc/apt/preferences.d/kilimanjaro.pref"
+  rm -rf -- "$staged"
+  log 'Archive update channel installed into the image.'
+}
+
+configure_archive_channel
+
 mount_chroot_filesystems
 in_chroot dpkg --force-confold -i \
   "/tmp/kilimanjaro-base_${KILIMANJARO_PACKAGE_VERSION}_all.deb" \
@@ -143,22 +200,21 @@ systemctl --root="$ROOTFS_DIR" enable \
   systemd-timesyncd.service \
   "$DISPLAY_MANAGER_SERVICE" \
   ufw.service \
+  cups.service \
+  cups-browsed.service \
+  avahi-daemon.service \
   kilimanjaro-firstboot.service \
   kilimanjaro-netmeter.timer
 systemctl --root="$ROOTFS_DIR" disable \
   lightdm.service \
   apt-daily.timer \
   apt-daily-upgrade.timer \
-  avahi-daemon.service \
-  clamav-daemon.service \
-  clamav-freshclam.service \
-  cups-browsed.service \
+  ssh.service \
   ModemManager.service || true
 
 systemctl --root="$ROOTFS_DIR" mask \
   apt-daily.service \
-  apt-daily-upgrade.service \
-  clamav-freshclam.service
+  apt-daily-upgrade.service
 
 if [[ -x "$ROOTFS_DIR/usr/sbin/plymouth-set-default-theme" ]]; then
   in_chroot plymouth-set-default-theme -R kilimanjaro

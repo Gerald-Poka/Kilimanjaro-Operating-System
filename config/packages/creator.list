@@ -1,0 +1,17 @@
+# Content creation pillar. Baked in so image, video, audio, vector and 3D work
+# needs no download, which matters where connectivity is unreliable.
+ffmpeg
+gimp
+inkscape
+krita
+kdenlive
+audacity
+blender
+# A wider font set than the -core packages: non-Latin coverage and the
+# typographic faces that documents and design work expect.
+fonts-noto-extra
+# Codecs beyond the desktop baseline, for importing and exporting media.
+ffmpeg
+libavcodec-extra
+libavformat-extra
+libavfilter-extra

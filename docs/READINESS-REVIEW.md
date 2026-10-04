@@ -4,6 +4,13 @@ This is a scoped implementation/review record, not a certification, legal
 opinion, exhaustive vulnerability audit or permission to install on the owner's PC.
 The owner explicitly deferred physical installation and physical USB writes.
 
+> **Source state has moved ahead of the artifact below.** A later audit of the
+> ISO's own package manifest found that several promised capabilities were
+> absent from the image, and the source tree has since been corrected. The
+> artifact, checksum and test evidence in this record describe the **previous**
+> image. No rebuild has been performed, so none of the corrections below are in
+> `output/` yet. See "Capability corrections" at the end of this document.
+
 ## Artifact
 
 `output/kilimanjaro-os-0.1.0-amd64.iso`
@@ -87,8 +94,10 @@ checks do not establish that every issue has been found.
 
 - Physical live boot, installer destination safety, installed desktop/reboot,
   BIOS installation, encryption/dual boot, update/recovery and hardware matrix.
-- NVIDIA driver/MOK enrollment, hybrid graphics and ASUS ROG controls on actual
-  models. Ubuntu 26.04 compatibility is an amd64 goal, not a blanket guarantee.
+- NVIDIA driver on actual models, hybrid graphics and ASUS ROG controls. MOK
+  enrolment is not a gate: the target deployment runs with Secure Boot disabled,
+  so the DKMS-signed modules load unenrolled. Ubuntu 26.04 compatibility is an
+  amd64 goal, not a blanket guarantee.
 - Trusted-LAN KDE Connect firewall integration: keep UFW enabled; do not open
   discovery/service ports globally just to make pairing work. Review a scoped
   exception against [KDE Connect's documentation](https://userbase.kde.org/KDEConnect).
@@ -100,3 +109,51 @@ checks do not establish that every issue has been found.
 
 See [the physical qualification plan](HARDWARE-QUALIFICATION.md). No physical
 device has been qualified by virtual-media success.
+
+## Capability corrections (source only, not yet built)
+
+An audit of `output/reports/filesystem.packages` — the package manifest read
+back out of the finished ISO — contradicted several claims this document and the
+README made. The image shipped without:
+
+- **Discover's APT backend.** `plasma-discover` and `plasma-discover-backend-flatpak`
+  were present but `plasma-discover-backend-aptkde` and `packagekit` were not,
+  and no Flatpak remote was configured. Discover therefore listed no Debian
+  software and no Flatpak software, while the README claimed an APT/PackageKit
+  backend.
+- **Any printing stack.** No CUPS at all, although the systemd preset was written
+  as if CUPS existed. No scanner support either.
+- **An English dictionary.** Only `hunspell-sw` was present. With `sw_TZ` as the
+  default locale, English documents were spellchecked against a Kiswahili
+  dictionary.
+- **Firmware updates and hardware diagnostics.** No `fwupd`, `smartmontools`,
+  `lm-sensors`, `hdparm`, `nvme-cli` or `ethtool`, so the hardware report could
+  not read disk health, temperatures or link state, and there was no in-OS
+  remedy for firmware faults.
+- **Accessibility, input methods and KWallet.** No Orca, KMag, `espeak-ng`, IBus,
+  on-screen keyboard or `kwallet-pam`.
+- **A working `nvidia-settings`.** The panel was installed with no driver, and
+  the alternatives pointed into an empty `/usr/lib/nvidia/current`.
+- **ClamAV that could not work.** Roughly 18 MB of library plus a daemon that
+  was disabled, masked, and had no signature database.
+- **Guest agents and school file-server clients.** No QEMU/VMware/VirtualBox
+  guest integration, no SMB/CIFS, no NFS, no VPN front ends.
+- **Archive tools and broad codecs.** No 7-Zip/RAR/unrar, no `libavcodec-extra`.
+
+Separately, `build/rootfs` had drifted **older** than the shipped ISO (an older
+kernel and 42 declared packages missing), so `container-repack` and
+`container-update` would have produced an image that silently dropped packages.
+A committed `__pycache__/*.pyc` was also being copied into the image, and
+`make validate` was itself regenerating it during every run.
+
+All of the above are corrected in source: package manifests, the systemd preset,
+APT policy, the hardware report, and both `validate.sh` and `iso-static.sh`,
+which now assert each promised capability is present and that the deliberately
+removed packages stay removed. `tests/validate.sh` runs Python with `-B` so it
+stops writing bytecode into the source tree.
+
+This is a source-only result. `make validate` passes, but **the corrections are
+not in `output/kilimanjaro-os-0.1.0-amd64.iso`** and the checksum above still
+describes the old image. A clean rebuild, then `make test`, is required before
+any of this can be claimed as shipped. Expect the ISO to grow by several hundred
+megabytes.

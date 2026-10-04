@@ -22,6 +22,7 @@ export default function ReadinessDetails() {
           error. Software-emulated testing is a separate result, not a fix for
           that failure or a guarantee of physical firmware compatibility.
         </div>
+        <div className="guide-notice">{readiness.notice}</div>
         <p>Tested development ISO SHA-256:</p>
         <pre>
           <code>{readiness.sha256}</code>
@@ -49,7 +50,8 @@ export default function ReadinessDetails() {
         <p>
           The goal is installation on 64-bit Intel/AMD PCs capable of running
           Ubuntu 26.04. This is a compatibility target, not a guarantee:
-          Kilimanjaro uses Debian 13 and a different kernel/driver baseline.
+          Kilimanjaro uses Debian 13 packages with the stable 6.12 LTS kernel,
+          so its driver and firmware baseline still differs.
         </p>
         <p>
           Start in a disposable VM. Physical testing is deferred until suitable

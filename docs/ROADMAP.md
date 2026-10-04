@@ -16,7 +16,11 @@ Status: implementation and initial VM smoke test complete; physical hardware qua
 - automated offline QEMU boot smoke test
 - Plasma 6 desktop, original wallpaper/emblem, global color scheme, SDDM, Plymouth, and GRUB branding
 - KDE System Settings, Info Center, and Kilimanjaro creator/product metadata
-- Discover APT/Flatpak update paths, Timeshift recovery snapshots, PulseAudio-compatible mixer, and NVIDIA Settings UI
+- Discover APT/Flatpak update paths, Timeshift recovery snapshots, PulseAudio-compatible mixer, and Vulkan diagnostics
+- printing and scanning, accessibility tools, on-screen keyboard and input methods
+- firmware updates over LVFS, and disk/SMART/sensor/link diagnostics
+- SMB/CIFS and NFS clients, VPN front ends, broadband modem support
+- Kiswahili and British English spellcheck dictionaries
 - Dolphin directory context action to open the selected folder in Konsole
 
 Exit gate status:
@@ -32,7 +36,13 @@ Exit gate status:
 - [ ] complete the physical hardware matrix
 - [ ] verify Timeshift snapshot creation and restore on a disposable VM install
 - [ ] verify PulseAudio-compatible audio controls with virtual and physical audio devices
-- [ ] verify NVIDIA Settings and driver stack on supported NVIDIA hardware
+- [ ] verify Discover lists Debian software, and that a real update installs cleanly
+- [ ] verify printing to a physical and a discovered network printer
+- [ ] verify scanning through the simple-scan front end
+- [ ] verify screen reader, magnifier and on-screen keyboard
+- [ ] verify `fwupdmgr get-devices` sees the firmware on a physical machine
+- [ ] verify an SMB and an NFS share are reachable from Dolphin
+- [ ] decide and qualify the NVIDIA driver position (firmware-only today)
 - [ ] package and validate ASUS ROG Control Center on supported ASUS models before inclusion
 
 ## Milestone 1 Installable development image
@@ -73,8 +83,10 @@ Exit gate status:
 ## Milestone 2 Owned package and update chain
 
 Status: base/desktop package builders, signed static APT snapshot generator and
-scoped client configuration implemented. Disposable APT base-package install/
-upgrade, conffile preservation and tamper/expiry rejection tests passed.
+scoped client configuration implemented. The image can now install the archive
+channel, gated on `KILIMANJARO_APT_REPO_URL` in `config/build.env`, and ships
+with the channel off because no hosting exists. Disposable APT base-package
+install/upgrade, conffile preservation and tamper/expiry rejection tests passed.
 Public hosting, owner archive key, rotation, installed-desktop
 upgrade/recovery qualification and offline bundles remain pending.
 See [APT update implementation](APT-UPDATES.md).
@@ -100,6 +112,10 @@ Status: not started.
 Status: not started.
 
 - removable-media mount and scanning design that does not run long work in udev
+  (note: ClamAV was removed from the image because it shipped disabled, masked
+  and without signature databases; revisit alongside this item)
+- decide whether offline update bundles and a content-pack manager are in scope,
+  which is what "offline-first" currently promises but does not deliver
 - LibreOffice macro policy and document compatibility test corpus
 - AppArmor enforcement and exception review
 - outbound-network audit with per-process evidence

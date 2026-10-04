@@ -70,11 +70,13 @@ export default function VirtualMachine() {
         or mount/edit internal disks when keeping your current system unchanged.
       </p>
       <p>
-        Ubuntu 26.04 compatibility is a target, not a guarantee: Ubuntu ships a
-        newer kernel than this Debian-based image, and this ISO is amd64 only.
-        Live USB testing does not qualify installation, proprietary graphics,
-        updates or recovery. We will keep the development warning until those
-        checks have evidence.
+        Ubuntu 26.04 compatibility is a target, not a guarantee. This image uses
+        Debian's stable 6.12 LTS kernel rather than the 7.x series Ubuntu 26.04
+        ships, because 6.12 is the newest kernel the packaged NVIDIA driver
+        builds against. The driver, firmware and userspace baselines still
+        differ, and this ISO is amd64 only. Live USB testing does not qualify
+        installation, proprietary graphics, updates or recovery. We will keep
+        the development warning until those checks have evidence.
       </p>
     </GuideSection>
   );

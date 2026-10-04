@@ -34,9 +34,11 @@ export default function Troubleshooting() {
       <p>
         The network meter records interface byte counters. The tray can request
         on-demand NetHogs process attribution with administrator authentication;
-        persistent per-process history is not implemented. A firewall or ClamAV
-        does not guarantee safety. Keep updates current and install apps from
-        sources you trust.
+        persistent per-process history is not implemented. The included firewall
+        (UFW) helps, but neither it nor AppArmor makes a machine safe. No
+        antivirus ships in the image: ClamAV was removed because it cannot work
+        without downloaded signature databases, which an offline image cannot
+        carry. Keep updates current and install apps from sources you trust.
       </p>
       <h3>Report a reproducible issue</h3>
       <p>

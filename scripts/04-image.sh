@@ -32,6 +32,16 @@ initrd_path="$ROOTFS_DIR/boot/initrd.img-$kernel_version"
 [[ -n "$kernel_path" && -f "$kernel_path" ]] || die 'No kernel image found in the rootfs.'
 [[ -n "$initrd_path" && -f "$initrd_path" ]] || die 'No initramfs image found in the rootfs.'
 
+# The newest image in /boot wins, so an unexpected or half-applied package
+# upgrade could otherwise ship an older kernel silently. Refuse instead. The
+# kernel comes from the stable suite, where the packaged NVIDIA DKMS module
+# builds; see the KILIMANJARO_KERNEL_MIN_MAJOR note in config/build.env.
+kernel_major=${kernel_version%%.*}
+if [[ ! "$kernel_major" =~ ^[0-9]+$ ]] || (( kernel_major < KILIMANJARO_KERNEL_MIN_MAJOR )); then
+  die "Selected kernel $kernel_version is older than the required major $KILIMANJARO_KERNEL_MIN_MAJOR. Check that $DEBIAN_SUITE is reachable and that nothing has pinned the kernel to a newer series than the NVIDIA driver supports."
+fi
+log "Using kernel $kernel_version from $DEBIAN_SUITE"
+
 reset_build_directory "$ISO_STAGING_DIR"
 install -d -m 0755 "$ISO_STAGING_DIR/boot/grub" "$ISO_STAGING_DIR/live" "$OUTPUT_DIR"
 

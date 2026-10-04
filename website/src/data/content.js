@@ -211,7 +211,7 @@ export const faqs = [
   ],
   [
     "What about NVIDIA and ASUS ROG laptops?",
-    "NVIDIA Settings is included, but matching drivers, Secure Boot module signing and hybrid graphics need hardware-specific testing. ASUS ROG fan controls and graphics-mode switching are not yet integrated.",
+    "The image now ships the proprietary NVIDIA driver together with its GSP firmware, so NVIDIA cards get hardware acceleration out of the box and AMD/Intel machines keep using Mesa. The target deployment runs with Secure Boot disabled in the PC BIOS, so no signature is enforced and no Secure Boot module enrolment is needed. It is built locally by dkms, which means a kernel update triggers a module rebuild that has not yet been tested; a failed rebuild would leave the machine unable to start. No physical NVIDIA GPU has been verified yet. ASUS ROG fan controls and graphics-mode switching are not yet integrated.",
   ],
   [
     "Is Kilimanjaro related to Debian, Nobara or Kali?",

@@ -1,4 +1,11 @@
+# Kilimanjaro updates are opt-in. Nothing runs on a timer, so an offline or
+# metered school link is never charged for traffic the user did not ask for.
 APT::Periodic::Enable "0";
 APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Unattended-Upgrade "0";
 
+# The machinery is installed and correctly scoped to security archives only
+# (see 51-kilimanjaro-unattended-upgrades). A user who wants it runs:
+#   sudo systemctl start unattended-upgrades.service
+# or uses KDE Discover. Automatic reboots are off so an update can never
+# interrupt a lesson mid-session.

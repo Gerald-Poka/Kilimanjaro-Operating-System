@@ -1,0 +1,10 @@
+// Scope unattended-upgrades to Debian security archives only.
+// 20auto-upgrades leaves APT::Periodic::Unattended-Upgrade at 0, so this
+// applies only when the user starts the service by hand or via Discover.
+Unattended-Upgrade::Allowed-Origins {
+        "${distro_id}:${distro_codename}-security";
+};
+
+// Never reboot on the user's behalf; a school machine may be mid-lesson.
+Unattended-Upgrade::Automatic-Reboot "false";
+Unattended-Upgrade::Remove-Unused-Dependencies "false";

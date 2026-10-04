@@ -62,25 +62,50 @@ The current `0.1.0` milestone is a development image. The ISO builds, passes the
 ## Current baseline
 
 - Debian 13 `trixie`, amd64
-- Linux 6.12 LTS series through Debian's `linux-image-amd64` package
+- Debian's stable 6.12 LTS kernel series via the `linux-image-amd64` package, with matching headers. 6.12 is the newest kernel any NVIDIA driver in any Debian suite builds against, which is what makes the proprietary driver below work. The kernel stays Debian-packaged and Debian-signed, so the existing shim/GRUB Secure Boot chain keeps validating it. The target deployment runs with Secure Boot disabled in the PC BIOS, so the driver's self-signed DKMS MOK needs no enrolment step
 - systemd with Kilimanjaro service policy
 - KDE Plasma 6, Xorg, and SDDM with the Kilimanjaro global theme
 - KDE System Settings and Info Center, with Kilimanjaro branding in About this System
-- KDE Discover with APT/package and Flatpak backends for software browsing and updates
+- KDE Discover with the APT/PackageKit backend and the Flatpak backend, so
+  software browsing and updates have a working APT source
 - Timeshift system snapshot/recovery utility (snapshot storage and schedules must be configured)
 - PulseAudio-compatible volume mixer (`pavucontrol`) on the PipeWire audio stack
-- NVIDIA Settings control panel package; a matching NVIDIA driver and NVIDIA GPU are required
+- printing via CUPS with automatic network-printer discovery, PDF printing, and
+  a scanner front end (`sane-utils`)
+- **Programming pillar**: a working offline C/C++/Python toolchain —
+  `build-essential`, `git`, `cmake`, `ninja-build`, `pkg-config`, `gdb`,
+  `python3-dev`, `pip` and `venv`. The large language toolchains (Rust, Go, a
+  JDK, Node) are intentionally excluded to keep the image reasonable and are
+  installable on demand
+- **Content creation pillar**, baked in so no download is needed: `ffmpeg`,
+  GIMP, Inkscape, Krita, Kdenlive, Audacity, Blender, `cups-filters` and the
+  extended Noto font set
+- **Gaming pillar**: Steam, Wine with 32-bit support (`wine32`), Winetricks,
+  GameMode, MangoHud, Vulkan tooling, and the proprietary NVIDIA driver with its
+  DKMS build support. Steam and most Windows titles need 32-bit libraries, so
+  the build enables `i386` multiarch; without it `steam` has no installation
+  candidate at all. `gamescope` is not in Debian 13 and is left to an explicit
+  `apt install -t trixie-backports gamescope`
+- accessibility: Orca screen reader, KMag magnifier and `espeak-ng` speech
+- on-screen keyboard and input-method support for touch and tablet hardware
 - ASUS ROG Control Center is not included yet: upstream does not officially support Debian, so it needs a tested, model-aware package before we ship it
 - Konsole pinned to the panel and an “Open in Konsole” action when right-clicking folders in Dolphin
 - Kiswahili locale, dictionary, and project-facing defaults with British English UI fallback
+- Kiswahili and British English spellcheck dictionaries, so English documents are
+  not spellchecked against the Kiswahili dictionary
 - Firefox enterprise policies for reduced background traffic and Tanzanian government bookmarks
 - disabled APT background downloads and NetworkManager connectivity checks
 - metered-connection defaults, interface-counter snapshots, and an on-demand
   per-process live network view in the KDE system tray
+- SMB/CIFS and NFS clients for school file servers, VPN front ends, and broadband
+  modem support
+- firmware updates over LVFS (`fwupd`), plus disk, SMART, sensor, network and
+  graphics diagnostics used for hardware reporting
 - LibreOffice, Kiwix, GCompris, TuxMath, Klavaro, and core security tools
 - Kilimanjaro Welcome with authenticated Daily, Office, Development, Gaming,
   Creator, Communication, and Ultimate software profiles
-- KDE Discover with APT and Flatpak support, KDE Connect, VLC, and OBS Studio
+- KDE Connect, VLC, OBS Studio, archive tools (7-Zip, RAR), and extended media codecs
+- guest integration agents for QEMU/KVM, VMware and VirtualBox
 - eleven coordinated Kilimanjaro wallpapers in source, emblem, dark color scheme, boot splash, login styling, and desktop layout
 - hybrid BIOS/UEFI ISO generation with Debian's signed shim and GRUB in the UEFI boot chain, SHA-256 checksums, and optional GPG signing
 
@@ -106,29 +131,48 @@ Debian 13 was selected because it is the current stable release and supports the
   per-process rates only while open (NetHogs requires administrator approval);
   persistent per-process history is not recorded.
 - A signed project APT repository, metapackage, complete branded artwork, USB
-  scanning workflow, and offline update bundles remain roadmap items.
+  scanning workflow, and offline update bundles remain roadmap items. The
+  repository tooling is built and signed, but is inert until hosting exists:
+  the image ships no archive source, so `kilimanjaro-base` and
+  `kilimanjaro-desktop` cannot yet update themselves on an installed system.
+- Printing is packaged and enabled, but no physical printer or scanner has been
+  tested. Network-printer discovery uses mDNS, so `avahi-daemon` is enabled for
+  that reason; disable it if site network policy forbids mDNS.
+- Security updates are opt-in. `unattended-upgrades` is installed and scoped to
+  Debian security archives only, but `APT::Periodic` stays at `0`, so nothing
+  downloads or installs without the user's decision.
 
 ## Updates, recovery, sound, and graphics
 
 Debian package updates work through `sudo apt update` followed by
 `sudo apt upgrade`, or KDE Discover. Kilimanjaro-specific base/desktop `.deb`
-packages and signed repository tooling are now implemented; public project
-hosting, archive-key activation and installed-system upgrade qualification
-remain pending. See [APT update implementation and activation](docs/APT-UPDATES.md).
+packages and signed repository tooling are implemented, and the image can now
+activate the archive channel, but public project hosting does not exist yet, so
+the channel ships disabled. See
+[APT update implementation and activation](docs/APT-UPDATES.md).
 
 Plasma X11 is the development default: its desktop has been visually verified
 in the Secure Boot VM. Wayland remains available but is not the default while
 its black-screen behavior under software-emulated virtual graphics is investigated.
 
-KDE Discover is packaged with the APT/PackageKit backend and Flatpak backend for
-normal online software and update operations. The image deliberately disables
-background APT timers to avoid unexpected metered-data use; users should open
-Discover and choose Updates when they are ready to update.
+KDE Discover is packaged with the APT/PackageKit backend and the Flatpak backend.
+The APT backend is what makes Debian software visible; without it Discover lists
+nothing, because the image ships no Flatpak remote. The image deliberately
+disables background APT timers to avoid unexpected metered-data use; users
+should open Discover and choose Updates when they are ready to update.
+
+For unattended security updates, `unattended-upgrades` is installed and limited
+to the Debian security archive, with automatic reboot disabled so an update
+cannot interrupt a lesson. It still runs only on request:
+
+```
+sudo systemctl start unattended-upgrades.service
+```
 
 Timeshift is included for system snapshots. It is not preconfigured to consume
 disk space automatically: after installing Kilimanjaro, choose a suitable
-snapshot destination and schedule in Timeshift. Validate restore on a test
-machine before relying on it, and keep personal files backed up separately.
+  snapshot destination and schedule in Timeshift. Validate restore on a test
+  machine before relying on it, and keep personal files backed up separately.
 
 Audio uses PipeWire with its PulseAudio compatibility service. KDE's panel
 provides everyday volume control, while `pavucontrol` exposes per-application
@@ -139,11 +183,18 @@ monitoring** to authorize NetHogs; it then shows live sent/received rates by
 process. Closing the window stops capture. It does not save per-process traffic
 history, and the periodic interface-byte snapshots remain separate.
 
-`nvidia-settings` is included for systems with a supported NVIDIA driver/GPU;
-this is the control panel, not the proprietary kernel driver. NVIDIA driver
-installation and Secure Boot module signing still need hardware-specific
-qualification. The VM uses virtual graphics, so the NVIDIA panel cannot be
-meaningfully tested there.
+NVIDIA GSP firmware is included so display output and `nouveau` work on NVIDIA
+hardware. The proprietary driver **is** shipped together with `nvidia-settings`
+in the gaming pillar, because Linux 6.12 is the newest kernel any NVIDIA driver
+in any Debian suite builds against: on a 7.x kernel there is no working packaged
+driver at all. AMD and Intel machines are unaffected and continue to use Mesa.
+
+The driver is built locally by `dkms` and signed with a self-signed MOK. The
+target deployment runs with Secure Boot disabled in the PC BIOS, so no signature
+is enforced and the modules load with no enrolment step. If you enable Secure
+Boot on a machine, the NVIDIA modules will be rejected until that MOK is
+enrolled, so treat Secure Boot as unsupported while the proprietary driver
+ships.
 
 Konsole is in the application launcher and pinned to the panel. Dolphin's
 folder context menu includes a top-level **Open in Konsole** action. Right-click
@@ -265,6 +316,14 @@ make vm-secureboot  # Secure Boot with enrolled Microsoft keys
 
 Next, use the blueprint's physical BIOS, UEFI, minimum-hardware, Wi-Fi, and USB-modem matrix. Do not distribute an image merely because it boots in a VM.
 
+When reporting a hardware problem, run the bundled read-only report instead of
+describing the machine by hand. It covers disks and filesystems, PCI and USB
+devices, network interfaces, audio, Vulkan, memory and kernel:
+
+```bash
+sudo kilimanjaro-hardware-report
+```
+
 ## Project decisions still needed
 
 - final branding, logo, palette, and release codename
@@ -272,5 +331,8 @@ Next, use the blueprint's physical BIOS, UEFI, minimum-hardware, Wi-Fi, and USB-
 - public domain names and hosting for the website, repository, support, and issue tracker
 - GPG release-key custody and rotation procedure
 - redistribution approval for OnlyOffice, TurboWarp, and curriculum content
+- whether the NVIDIA proprietary driver should ever ship in the image, given
+  the unenrolled DKMS MOK it carries (a non-issue while Secure Boot is off)
+- whether offline update bundles should be produced, and how large they may be
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for implementation status and the next milestones.
