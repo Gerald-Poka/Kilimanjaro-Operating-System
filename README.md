@@ -2,14 +2,15 @@
 
 Project source: [Gerald-Poka/Kilimanjaro-Operating-System](https://github.com/Gerald-Poka/Kilimanjaro-Operating-System).
 Author: Gerald Ndyamukama · geraldndyamukama39@gmail.com.
-This repository contains source and project assets, not a production-certified
-OS. Generated ISOs, VM disks, build trees and private key material are excluded.
+This repository contains source code and project assets for an experimental OS;
+it is not a production-certified release. Generated ISOs, VM disks, build trees,
+and private key material are excluded.
 
 ## Important disclaimer — development software
 
-Kilimanjaro OS is an independent, community-developed project. The current
-build is experimental, not a certified secure or stable release, and is not
-recommended for mission-critical, safety-critical or production use.
+Kilimanjaro OS is an independent project. This development build is experimental,
+not a certified secure or stable release, and is not recommended for
+mission-critical, safety-critical, or production use.
 
 **No warranty:** to the extent permitted by applicable law, original Kilimanjaro
 code is provided as-is, without express or implied warranties, including
@@ -25,12 +26,13 @@ to work. A checksum or signed Secure Boot chain does not certify the entire OS.
 
 **No guaranteed support:** there is no professional support contract,
 response-time commitment or guaranteed maintenance/security-update schedule.
-Kilimanjaro claims no endorsement by Debian, KDE or other upstream vendors.
+Kilimanjaro OS is not affiliated with or endorsed by Debian, KDE, or other
+upstream projects.
 
 This notice does not limit rights or obligations that cannot lawfully be
 excluded, change component licenses, or guarantee immunity from legal claims.
-Obtain qualified legal advice for your jurisdiction before commercial or broad
-public distribution. See [licensing scope](LICENSING.md),
+Obtain qualified legal advice for your jurisdiction before broad or commercial
+distribution. See [licensing scope](LICENSING.md),
 [release limitations](docs/READINESS-REVIEW.md) and
 [publication requirements](docs/PUBLISHING.md).
 
@@ -39,10 +41,11 @@ The React website is in [website/](website/README.md). Run `npm ci` and
 development status, and supports staging the checksummed development ISO for
 local downloads. It has not been published to a public domain.
 
-Before making the source public or distributing an ISO, follow the
-[publication and release checklist](docs/PUBLISHING.md). Original-project
-artwork/documentation permissions and release-key setup still require attention; upstream
-components retain their own licenses and credits.
+The source repository is public. Before distributing an ISO or making other
+public releases, follow the [publication and release checklist](docs/PUBLISHING.md).
+Artwork and documentation permissions, third-party notices, and release-key
+setup still need review; upstream components retain their own licenses and
+credits.
 
 Original Kilimanjaro code is **GPL-3.0-only**, copyright 2026 Gerald Ndyamukama.
 Read [LICENSE](LICENSE) and [licensing scope](LICENSING.md). The current
@@ -53,11 +56,22 @@ not replace upstream licenses or automatically license all artwork in the ISO.
 The goal is installation on physical Intel/AMD PCs. See the
 [hardware qualification plan](docs/HARDWARE-QUALIFICATION.md): compatibility
 with Ubuntu 26.04-class PCs is a target, not a guarantee. Physical testing is
-deferred; the current PC and physical USB devices must not be overwritten.
+deferred. Do not install on a primary computer or write to a physical USB
+device without explicit approval and a verified backup.
 
-Kilimanjaro OS is a lightweight, offline-first desktop operating system for Tanzanian schools and offices. This repository implements the Debian-based path selected in the project blueprint while keeping Kilimanjaro's identity, policies, package selection, and release pipeline under project control.
+Kilimanjaro OS is a Debian-based desktop project for Tanzanian schools and
+offices. Supporting offline use is a design goal, not a claim that offline
+updates or content packs are already available. This repository implements the
+Debian-based path selected in the project blueprint while keeping Kilimanjaro's
+identity, policies, package selection, and release pipeline under project
+control.
 
-The current `0.1.0` milestone is a development image. The ISO builds, passes the offline BIOS live-boot test, and has booted in a Secure Boot-enabled UEFI VM. The earlier initramfs failure was fixed by preserving root ownership in the container build volume. Installation/reboot qualification and physical hardware testing are still required before a production release.
+The `0.1.0` milestone is a development image. A previously built ISO passed an
+offline BIOS live-boot test and booted in a Secure Boot-enabled UEFI VM. The
+source has changed since that image was built, so those results do not validate
+the current source; rebuild and test the image before relying on them.
+Installation/reboot qualification and physical hardware testing are still
+required before a production release.
 
 ## Current baseline
 
@@ -235,6 +249,10 @@ tests/validate.sh         Non-privileged source validation
 
 For day-to-day editing, container rebuilds, automated tests, and BIOS/UEFI VM commands, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). The visual language and UI rules are recorded in [docs/DESIGN.md](docs/DESIGN.md). The application and profile backlog is maintained in [docs/SOFTWARE-ROADMAP.md](docs/SOFTWARE-ROADMAP.md).
 
+Contributors can start with the [contribution guide](CONTRIBUTING.md) and submit
+changes through pull requests. Owner review is the intended merge policy; GitHub
+branch protection must be enabled by the repository owner to enforce it.
+
 See [installation and acceptance tests](docs/INSTALLATION.md) before using the
 installer. A local React website preview is implemented in `website/`; public
 release publishing remains deferred until OS release qualification.
@@ -324,15 +342,18 @@ devices, network interfaces, audio, Vulkan, memory and kernel:
 sudo kilimanjaro-hardware-report
 ```
 
-## Project decisions still needed
+## Open project decisions
 
-- final branding, logo, palette, and release codename
-- project software license and contributor policy
-- public domain names and hosting for the website, repository, support, and issue tracker
-- GPG release-key custody and rotation procedure
-- redistribution approval for OnlyOffice, TurboWarp, and curriculum content
-- whether the NVIDIA proprietary driver should ever ship in the image, given
-  the unenrolled DKMS MOK it carries (a non-issue while Secure Boot is off)
-- whether offline update bundles should be produced, and how large they may be
+- Approve the provenance and licensing of project artwork and documentation.
+- Enable GitHub branch protection for `main`, requiring pull requests and
+  code-owner approval. A `CODEOWNERS` file alone does not enforce review; see
+  [contribution guidance](CONTRIBUTING.md).
+- Decide where to host the website and signed Kilimanjaro package repository.
+- Establish release-key custody, rotation, and fingerprint publication.
+- Decide whether optional TurboWarp packaging and offline update bundles are in
+  scope, and document redistribution requirements before shipping them.
+- Decide whether the NVIDIA proprietary driver belongs in the image. Its
+  self-signed DKMS module requires Secure Boot to be disabled unless its key is
+  enrolled.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for implementation status and the next milestones.

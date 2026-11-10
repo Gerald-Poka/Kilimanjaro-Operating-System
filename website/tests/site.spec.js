@@ -430,7 +430,11 @@ test("staged release has downloadable ISO and checksum without reading ISO into 
 }) => {
   await page.goto("/downloads");
   const response = await request.get("/release.json");
-  test.skip(!response.ok(), "No release staged in this checkout");
+  test.skip(
+    !response.ok() ||
+      !(response.headers()["content-type"] ?? "").includes("application/json"),
+    "No release staged in this checkout",
+  );
   const release = await response.json();
   await expect(
     page.getByRole("link", { name: "Download development ISO" }),
